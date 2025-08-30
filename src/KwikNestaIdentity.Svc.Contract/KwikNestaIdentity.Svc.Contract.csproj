@@ -9,4 +9,7 @@
 	<PackageReference Include="CSharpTypes.Extensions" Version="1.0.0" />
 	<PackageReference Include="KwikNesta.Contracts.Core" Version="1.1.2" />
   </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\KwikNestaIdentity.Svc.Domain\KwikNestaIdentity.Svc.Domain.csproj" />
+  </ItemGroup>
 </Project>

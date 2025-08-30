@@ -1,4 +1,4 @@
-name: Build And Push Kwik Nesta Identity Docker Image To Docker Hub
+name: Build And Push Kwik Nesta Identity Service Docker Image To Docker Hub
 
 on:
   pull_request:
@@ -19,7 +19,7 @@ jobs:
       - name: Get latest semver tag from Docker Hub
         id: get_latest_tag
         run: |
-          tags=$(curl -s "https://hub.docker.com/v2/repositories/${{ secrets.HUB_USERNAME }}/kwik-nesta-identity/tags?page_size=100" | jq -r '.results[].name')
+          tags=$(curl -s "https://hub.docker.com/v2/repositories/${{ secrets.HUB_USERNAME }}/kwik-nesta.identity.svc/tags?page_size=100" | jq -r '.results[].name')
           echo "All tags: $tags"
 
           latest_version=$(echo "$tags" | grep -E '^test-v[0-9]+\.[0-9]+\.[0-9]+$' | sort -V | tail -n 1)
@@ -54,12 +54,12 @@ jobs:
           docker build \
             --build-arg VERSION_TAG=${{ steps.get_latest_tag.outputs.tag }} \
             --build-arg BUILD_CONFIGURATION=Release \
-            -t ${{ secrets.HUB_USERNAME }}/kwik-nesta-identity:${{ steps.get_latest_tag.outputs.tag }} \
-            -t ${{ secrets.HUB_USERNAME }}/kwik-nesta-identity:test \
-            -f src/IdentityService/IdentityService.Api/Dockerfile .
+            -t ${{ secrets.HUB_USERNAME }}/kwik-nesta.identity.svc:${{ steps.get_latest_tag.outputs.tag }} \
+            -t ${{ secrets.HUB_USERNAME }}/kwik-nesta.identity.svc:test \
+            -f src/KwikNestaIdentity.Svc.API/Dockerfile .
 
       - name: Push Docker Images to Docker Hub
         run: |
-          docker login -u ${{ secrets.HUB_USERNAME }} -p ${{ secrets.HUB_SECRET }}
-          docker push ${{ secrets.HUB_USERNAME }}/kwik-nesta-identity:${{ steps.get_latest_tag.outputs.tag }}
-          docker push ${{ secrets.HUB_USERNAME }}/kwik-nesta-identity:test
+          docker login -u ${{ secrets.HUB_USERNAME }} -p ${{ secrets.HUB_TEST_SECRET }}
+          docker push ${{ secrets.HUB_USERNAME }}/kwik-nesta.identity.svc:${{ steps.get_latest_tag.outputs.tag }}
+          docker push ${{ secrets.HUB_USERNAME }}/kwik-nesta.identity.svc:test

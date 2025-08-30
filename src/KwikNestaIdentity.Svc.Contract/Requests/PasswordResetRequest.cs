@@ -1,0 +1,16 @@
+﻿using System.Text.Json.Serialization;
+
+namespace KwikNestaIdentity.Svc.Contract.Requests
+{
+    public class PasswordResetRequest
+    {
+        public string Email { get; set; } = string.Empty;
+        public string Otp { get; set; } = string.Empty;
+        public string NewPassword { get; set; } = string.Empty;
+        public string ConfirmPassword { get; set; } = string.Empty;
+
+        [JsonIgnore]
+        public bool IsValid => !string.IsNullOrWhiteSpace(Email) && !string.IsNullOrWhiteSpace(Otp) &&
+            !string.IsNullOrWhiteSpace(NewPassword) && NewPassword.Equals(ConfirmPassword);
+    }
+}

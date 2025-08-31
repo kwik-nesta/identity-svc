@@ -5,13 +5,13 @@ VisualStudioVersion = 17.11.35327.3
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "KwikNestaIdentity.Svc.API", "src\KwikNestaIdentity.Svc.API\KwikNestaIdentity.Svc.API.csproj", "{D6D1DCF5-A037-4D48-83F3-CBAE5FB48F24}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "KwikNestaIdentity.Svc.Application", "src\KwikNestaIdentity.Svc.Application\KwikNestaIdentity.Svc.Application.csproj", "{96FFBA4E-1F4B-4712-8F4C-52C95711215D}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "KwikNestaIdentity.Svc.Application", "src\KwikNestaIdentity.Svc.Application\KwikNestaIdentity.Svc.Application.csproj", "{96FFBA4E-1F4B-4712-8F4C-52C95711215D}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "KwikNestaIdentity.Svc.Contract", "src\KwikNestaIdentity.Svc.Contract\KwikNestaIdentity.Svc.Contract.csproj", "{14E4EC48-6206-4086-ACA7-4264B2070E3A}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "KwikNestaIdentity.Svc.Contract", "src\KwikNestaIdentity.Svc.Contract\KwikNestaIdentity.Svc.Contract.csproj", "{14E4EC48-6206-4086-ACA7-4264B2070E3A}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "KwikNestaIdentity.Svc.Domain", "src\KwikNestaIdentity.Svc.Domain\KwikNestaIdentity.Svc.Domain.csproj", "{BB3FF40F-50AD-4902-8F8E-AE5D6714FFC1}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "KwikNestaIdentity.Svc.Domain", "src\KwikNestaIdentity.Svc.Domain\KwikNestaIdentity.Svc.Domain.csproj", "{BB3FF40F-50AD-4902-8F8E-AE5D6714FFC1}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "KwikNestaIdentity.Svc.Infrastructure", "src\KwikNestaIdentity.Svc.Infrastructure\KwikNestaIdentity.Svc.Infrastructure.csproj", "{11A1E2B8-203D-4CDA-8282-8A6D2F2F4A42}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "KwikNestaIdentity.Svc.Infrastructure", "src\KwikNestaIdentity.Svc.Infrastructure\KwikNestaIdentity.Svc.Infrastructure.csproj", "{11A1E2B8-203D-4CDA-8282-8A6D2F2F4A42}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

@@ -12,4 +12,9 @@
   <ItemGroup>
     <ProjectReference Include="..\KwikNestaIdentity.Svc.Domain\KwikNestaIdentity.Svc.Domain.csproj" />
   </ItemGroup>
+  <ItemGroup>
+    <None Update="Protos\identity.proto">
+      <GrpcServices>Server</GrpcServices>
+    </None>
+  </ItemGroup>
 </Project>

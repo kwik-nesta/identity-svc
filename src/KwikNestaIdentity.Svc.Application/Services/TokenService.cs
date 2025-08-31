@@ -96,6 +96,7 @@ namespace KwikNestaIdentity.Svc.Application.Services
                 rec.RevokedAt = DateTimeOffset.UtcNow;
                 rec.IsDeprecated = true;
                 await _db.UpdateAsync(rec);
+                return null;
             }
             return rec;
         }

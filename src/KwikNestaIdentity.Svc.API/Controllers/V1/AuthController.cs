@@ -58,7 +58,6 @@ namespace KwikNestaIdentity.Svc.API.Controllers.V1
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         [HttpPut("refresh")]
-        [Authorize]
         [RequireAudienceHeader]
         public async Task<IActionResult> Refresh([FromBody] RefreshTokenRequest request, [FromHeader(Name = "Audience")] string audience)
         {

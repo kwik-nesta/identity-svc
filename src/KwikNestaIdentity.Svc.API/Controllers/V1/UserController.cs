@@ -51,7 +51,7 @@ namespace KwikNestaIdentity.Svc.API.Controllers.V1
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         [HttpPut("update-basic")]
         [Authorize]
-        public async Task<IActionResult> UpdateBasicDetails(UpdateUserBasicDetailsRequest request)
+        public async Task<IActionResult> UpdateBasicDetails(UpdateUserBasicDetailsRequest2 request)
         {
             var result = await _service.User.UpdateBasicDetails(request);
             if (!result.Success)

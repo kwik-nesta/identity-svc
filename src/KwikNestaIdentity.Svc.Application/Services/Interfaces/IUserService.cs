@@ -9,7 +9,7 @@ namespace KwikNestaIdentity.Svc.Application.Services.Interfaces
         string GetLoggedInUserId();
         Task<ApiBaseResponse> GetLoggedInUserLeanAsync();
         Task<List<SystemRoles>> GetUserRoles();
-        Task<ApiBaseResponse> UpdateBasicDetails(UpdateUserBasicDetailsRequest request);
+        Task<ApiBaseResponse> UpdateBasicDetails(UpdateUserBasicDetailsRequest2 request);
         Task<ApiBaseResponse> UpdateUserLastLogin(string id);
     }
 }

@@ -1,17 +1,18 @@
-﻿using KwikNestaIdentity.Svc.Domain.Enums;
+﻿using KwikNestaIdentity.Svc.Contract.Protos;
+using KwikNestaIdentity.Svc.Domain.Enums;
 
 namespace KwikNestaIdentity.Svc.Application.Validations
 {
     internal class ValidationExtensions
     {
-        private static readonly List<SystemRoles> _adminRoles = new List<SystemRoles>
+        private static readonly List<GrpcSystemRole> _adminRoles = new List<GrpcSystemRole>
         {
-            SystemRoles.SuperAdmin, SystemRoles.Admin
+            GrpcSystemRole.SuperAdmin, GrpcSystemRole.Admin
         };
 
-        internal static bool IsAValidRole(SystemRoles role, bool isNotAdmin)
+        internal static bool IsAValidRole(GrpcSystemRole role)
         {
-            return !_adminRoles.Contains(role) && isNotAdmin || _adminRoles.Contains(role) && !isNotAdmin;
+            return role != GrpcSystemRole.None;
         }
 
         internal static bool IsAMatch(string password, string comparePassword)

@@ -46,11 +46,11 @@ namespace KwikNestaIdentity.Svc.Application.Services
 
         public async Task<ApiBaseResponse> ValidateUser(LoginRequest request)
         {
-            var validation = new LoginValidator().Validate(request);
-            if (!validation.IsValid)
-            {
-                return new BadRequestResponse(validation.Errors.FirstOrDefault()?.ErrorMessage ?? "Invalid input");
-            }
+            //var validation = new LoginValidator().Validate(request);
+            //if (!validation.IsValid)
+            //{
+            //    return new BadRequestResponse(validation.Errors.FirstOrDefault()?.ErrorMessage ?? "Invalid input");
+            //}
 
             var user = await _userManager.FindByNameAsync(request.UserName);
             if (user == null)
@@ -88,47 +88,47 @@ namespace KwikNestaIdentity.Svc.Application.Services
                 return new ForbiddenResponse("You have no permission to add an Admin user");
             }
 
-            var validate = new RegistrationValidator().Validate(request);
-            if (!validate.IsValid)
-            {
-                return new BadRequestResponse(validate.Errors.FirstOrDefault()?.ErrorMessage ?? "Registration failed");
-            }
+            //var validate = new RegistrationValidator().Validate(request);
+            //if (!validate.IsValid)
+            //{
+            //    return new BadRequestResponse(validate.Errors.FirstOrDefault()?.ErrorMessage ?? "Registration failed");
+            //}
 
-            var existingUser = await _userManager.FindByEmailAsync(request.Email);
-            if (existingUser != null)
-            {
-                return new ForbiddenResponse($"A user already exists with this email: {request.Email}");
-            }
+            //var existingUser = await _userManager.FindByEmailAsync(request.Email);
+            //if (existingUser != null)
+            //{
+            //    return new ForbiddenResponse($"A user already exists with this email: {request.Email}");
+            //}
 
-            var user = request.Map();
-            var createResult = await _userManager.CreateAsync(user, request.Password);
-            if (!createResult.Succeeded)
-            {
-                return new BadRequestResponse(createResult.Errors?.FirstOrDefault()?.Description ?? "User registration failed. Please try again");
-            }
+            //var user = request.Map();
+            //var createResult = await _userManager.CreateAsync(user, request.Password);
+            //if (!createResult.Succeeded)
+            //{
+            //    return new BadRequestResponse(createResult.Errors?.FirstOrDefault()?.Description ?? "User registration failed. Please try again");
+            //}
 
-            var roleResult = await _userManager.AddToRoleAsync(user, request.Role.GetDescription());
-            if (!roleResult.Succeeded)
-            {
-                await _userManager.DeleteAsync(user);
-                return new BadRequestResponse($"Registration failed. {roleResult.Errors.FirstOrDefault()?.Description}");
-            }
+            //var roleResult = await _userManager.AddToRoleAsync(user, request.Role.GetDescription());
+            //if (!roleResult.Succeeded)
+            //{
+            //    await _userManager.DeleteAsync(user);
+            //    return new BadRequestResponse($"Registration failed. {roleResult.Errors.FirstOrDefault()?.Description}");
+            //}
 
-            // OTP
-            var otp = CommonHelpers.GenerateOtp();
-            var (hash, salt) = CommonHelpers.HashOtp(otp);
-            var otpEntry = user.Map(hash, salt);
-            await _crudKit.InsertAsync(otpEntry);
+            //// OTP
+            //var otp = CommonHelpers.GenerateOtp();
+            //var (hash, salt) = CommonHelpers.HashOtp(otp);
+            //var otpEntry = user.Map(hash, salt);
+            //await _crudKit.InsertAsync(otpEntry);
 
-            // Send activation email to user
-            await _pubSub.PublishAsync(NotificationMessage.Initialize(user.Email!, user.FirstName,
-                otp, OtpType.AccountVerification.ToEmailType()),
-                routingKey: MQRoutingKey.AccountEmail.GetDescription());
+            //// Send activation email to user
+            //await _pubSub.PublishAsync(NotificationMessage.Initialize(user.Email!, user.FirstName,
+            //    otp, OtpType.AccountVerification.ToEmailType()),
+            //    routingKey: MQRoutingKey.AccountEmail.GetDescription());
 
             // Return to the user
             return new OkResponse<RegistrationDto>(new RegistrationDto
             {
-                Email = user.Email,
+                //Email = user.Email,
                 Message = "Registration successful. Please check your mail for your activation code"
             });
         }

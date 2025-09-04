@@ -2,7 +2,7 @@
 
 namespace KwikNestaIdentity.Svc.Contract.Requests
 {
-    public class UpdateUserBasicDetailsRequest
+    public class UpdateUserBasicDetailsRequest2
     {
         public string FirstName { get; set; } = string.Empty;
         public string LastName { get; set; } = string.Empty;

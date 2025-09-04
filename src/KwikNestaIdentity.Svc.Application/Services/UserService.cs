@@ -35,13 +35,13 @@ namespace KwikNestaIdentity.Svc.Application.Services
             _pubSub = pubSub;
         }  
 
-        public async Task<ApiBaseResponse> UpdateBasicDetails(UpdateUserBasicDetailsRequest request)
+        public async Task<ApiBaseResponse> UpdateBasicDetails(UpdateUserBasicDetailsRequest2 request)
         {
-            var validate = new UserBasicDetailsRequestValidator().Validate(request);
-            if (!validate.IsValid)
-            {
-                return new BadRequestResponse(validate.Errors.FirstOrDefault()?.ErrorMessage ?? "User details update failed");
-            }
+            //var validate = new UserBasicDetailsRequestValidator().Validate(request);
+            //if (!validate.IsValid)
+            //{
+            //    return new BadRequestResponse(validate.Errors.FirstOrDefault()?.ErrorMessage ?? "User details update failed");
+            //}
 
             var userId = GetLoggedInUserId();
             var existingUser = await _userManager.FindByIdAsync(userId);
@@ -50,8 +50,8 @@ namespace KwikNestaIdentity.Svc.Application.Services
                 return new NotFoundResponse($"No user found");
             }
 
-            existingUser = existingUser.Map(request);
-            await _userManager.UpdateAsync(existingUser);
+            //existingUser = existingUser.Map(request);
+            //await _userManager.UpdateAsync(existingUser);
 
             // Log action
             await _pubSub.PublishAsync(AuditLog.Initialize(existingUser.Id, existingUser.Id, existingUser.Id.ToGuid(),

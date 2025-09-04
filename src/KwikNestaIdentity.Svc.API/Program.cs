@@ -3,7 +3,8 @@ using DiagnosKit.Core.Configurations;
 using DiagnosKit.Core.Extensions;
 using DiagnosKit.Core.Logging;
 using KwikNestaIdentity.Svc.API.Extensions;
-using KwikNestaIdentity.Svc.API.ProtoImpl;
+using KwikNestaIdentity.Svc.API.Filters;
+using KwikNestaIdentity.Svc.Application.Services;
 using KwikNestaIdentity.Svc.Infrastructure;
 using Microsoft.EntityFrameworkCore;
 
@@ -29,7 +30,10 @@ builder.Services
 
 builder.Host.ConfigureSerilogESSink();
 builder.Services.AddAuthorization();
-builder.Services.AddGrpc();
+builder.Services.AddGrpc(options =>
+{
+    options.Interceptors.Add<GrpcExceptionInterceptor>();
+});
 
 var app = builder.Build();
 
@@ -39,7 +43,8 @@ app.UseDiagnosKitPrometheus()
     .UseDiagnosKitLogEnricher();
 
 // Map gRPC service
-app.MapGrpcService<IdentityGrpcService>();
+app.MapGrpcService<GrpcAppUserService>();
+app.MapGrpcService<GrpcAuthenticationService>();
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {

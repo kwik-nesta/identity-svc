@@ -1,7 +1,5 @@
 ﻿using CSharpTypes.Extensions.Enumeration;
 using EFCore.CrudKit.Library.Extensions;
-using KwikNestaIdentity.Svc.Application.Services;
-using KwikNestaIdentity.Svc.Application.Services.Interfaces;
 using KwikNestaIdentity.Svc.Domain.Entities;
 using KwikNestaIdentity.Svc.Domain.Enums;
 using KwikNestaIdentity.Svc.Infrastructure;
@@ -120,9 +118,6 @@ namespace KwikNestaIdentity.Svc.API.Extensions
                         .AllowAnyMethod()
                         .AllowAnyHeader());
             });
-
-        public static IServiceCollection ConfigureServices(this IServiceCollection services) =>
-            services.AddScoped<IServiceManager, ServiceManager>();
 
         public static IServiceCollection ConfigureApiVersioning(this IServiceCollection services)
         {

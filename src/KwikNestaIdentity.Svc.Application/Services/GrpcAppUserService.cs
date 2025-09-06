@@ -1,15 +1,13 @@
-﻿using API.Common.Response.Model.Responses;
-using CrossQueue.Hub.Services.Interfaces;
+﻿using CrossQueue.Hub.Services.Interfaces;
 using CSharpTypes.Extensions.Enumeration;
 using CSharpTypes.Extensions.Guid;
 using Grpc.Core;
 using KwikNesta.Contracts.Enums;
+using KwikNesta.Contracts.Extensions;
 using KwikNesta.Contracts.Models;
 using KwikNestaIdentity.Svc.Application.Extensions;
 using KwikNestaIdentity.Svc.Application.Helpers;
 using KwikNestaIdentity.Svc.Application.Validations;
-using KwikNestaIdentity.Svc.Contract;
-using KwikNestaIdentity.Svc.Contract.DTOs;
 using KwikNestaIdentity.Svc.Contract.Protos;
 using KwikNestaIdentity.Svc.Domain.Entities;
 using KwikNestaIdentity.Svc.Domain.Enums;
@@ -76,7 +74,7 @@ namespace KwikNestaIdentity.Svc.Application.Services
 
             return new UpdateBasicUserDetailsResponse
             {
-                Response =
+                Response = new UserStringResponse
                 {
                     Message = "User details successfully updated.",
                     Status = 200
@@ -119,6 +117,41 @@ namespace KwikNestaIdentity.Svc.Application.Services
             };
         }
 
+        /// <summary>
+        ///Get paged list of users
+        /// </summary>
+        /// <param name="request">The request received from the client.</param>
+        /// <param name="context">The context of the server-side call handler being invoked.</param>
+        /// <returns>The response to send back to the client (wrapped by a task).</returns>
+        public override async Task<GetPagedUsersResponse> GetPagedUsers(GetPagedUsersRequest request, ServerCallContext context)
+        {
+            var user = context.GetHttpContext()?.User;
+            if (!(user?.IsInRole(SystemRoles.Admin.GetDescription()) ?? false) && 
+                !(user?.IsInRole(SystemRoles.SuperAdmin.GetDescription()) ?? false))
+            {
+                throw new RpcException(new Status(StatusCode.PermissionDenied, "Access denied!!! You're not authorized to perform this action."));
+            }
+            
+            var users = _userManager.Users
+                .OrderByDescending(c => c.CreatedAt)
+                .Filter(request)
+                .Search(request.Search);
+
+            var pagedData = await Task.Run(() => users.Paginate(request.Page, request.Size));
+            return new GetPagedUsersResponse
+            {
+                MetaData = new UserPageMetaData
+                {
+                    Page = pagedData.CurrentPage,
+                    Size = pagedData.PageCount,
+                    TotalCount = pagedData.ItemCount,
+                    HasNext = pagedData.HasNext,
+                    HasPrevious = pagedData.HasPrevious
+                },
+                Users = { pagedData.Items.Select(Map) }
+            };
+        }
+
         private static User Map(AppUser user)
         {
             return new User
@@ -127,7 +160,7 @@ namespace KwikNestaIdentity.Svc.Application.Services
                 Email = user.Email,
                 FirstName = user.FirstName,
                 LastName = user.LastName,
-                MiddleName = user.OtherName,
+                MiddleName = user.OtherName ?? string.Empty,
                 PhoneNumber = user.PhoneNumber,
                 Gender = user.Gender.GetDescription(),
                 Status = EnumMapper.Map<UserStatus, GrpcUserStatus>(user.Status),

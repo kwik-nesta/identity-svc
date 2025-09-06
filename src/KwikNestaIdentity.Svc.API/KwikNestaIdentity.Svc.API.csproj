@@ -22,4 +22,7 @@
     <ProjectReference Include="..\KwikNestaIdentity.Svc.Application\KwikNestaIdentity.Svc.Application.csproj" />
     <ProjectReference Include="..\KwikNestaIdentity.Svc.Infrastructure\KwikNestaIdentity.Svc.Infrastructure.csproj" />
   </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Controllers\" />
+  </ItemGroup>
 </Project>

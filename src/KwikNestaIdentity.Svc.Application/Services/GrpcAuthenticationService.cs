@@ -66,6 +66,14 @@ namespace KwikNestaIdentity.Svc.Application.Services
             var accessToken = CreateAccessToken(User, Roles, _config.Audience);
             var refreshToken = await CreateAndSaveRefreshTokenAsync(User.Id);
 
+            User.UpdatedAt = DateTime.UtcNow;
+            User.LastLogin = DateTime.UtcNow;
+            await _userManager.UpdateAsync(User);
+
+            await _pubSub.PublishAsync(AuditLog.Initialize(User.Id, User.Id, User.Id.ToGuid(),
+                AuditDomain.User, AuditAction.LoogedIn),
+                routingKey: MQRoutingKey.AuditTrails.GetDescription());
+
             return new LoginResponse
             {
                 Tokens = new TokenResponse
@@ -159,27 +167,24 @@ namespace KwikNestaIdentity.Svc.Application.Services
 
             }
 
-            var storedToken = await ValidateRefreshTokenAsync(request.RefreshToken);
-            if (storedToken == null)
-            {
+            var storedToken = await ValidateRefreshTokenAsync(request.RefreshToken) ??
                 throw new RpcException(new Status(StatusCode.PermissionDenied, "Invalid or expired token"));
 
-            }
-
             // (Optional) check if user is still active
-            var user = await _userManager.FindByIdAsync(storedToken.UserId);
-            if (user == null)
-            {
+            var user = await _userManager.FindByIdAsync(storedToken.UserId) ??
                 throw new RpcException(new Status(StatusCode.NotFound, "User not found"));
 
+            if(user.Status != UserStatus.Active)
+            {
+                throw new RpcException(new Status(StatusCode.PermissionDenied, "User is inactive. Please reactivate your account to continue."));
             }
-
+            
             // generate new tokens
             var roles = (await _userManager.GetRolesAsync(user)).ToArray();
             var newAccessToken = CreateAccessToken(user, roles, _config.Audience);
             return new RefreshTokenResponse
             {
-                Token =
+                Token = new TokenResponse 
                 {
                     AccessToken = newAccessToken,
                     RefreshToken = request.RefreshToken
@@ -229,7 +234,7 @@ namespace KwikNestaIdentity.Svc.Application.Services
             await _crudKit.DeleteAsync(otpEntry);
             return new VerifyAccountResponse
             {
-                Response =
+                Response = new StringResponse
                 {
                     Message = "Account successfully verified. Please proceed to login",
                     Status = 200
@@ -245,15 +250,12 @@ namespace KwikNestaIdentity.Svc.Application.Services
         /// <returns>The response to send back to the client (wrapped by a task).</returns>
         public override async Task<ResendOtpResponse> ResendOtp(ResendOtpRequest request, ServerCallContext context)
         {
-            var user = await _userManager.FindByEmailAsync(request.Email);
-            if (user == null)
-            {
+            var user = await _userManager.FindByEmailAsync(request.Email) ??
                 throw new RpcException(new Status(StatusCode.NotFound, "No user found with this email"));
-            }
-
+            
             if (user.EmailConfirmed && request.Type == GrpcOtpType.AccountVerification)
             {
-                throw new RpcException(new Status(StatusCode.Unimplemented, "Account already verified. Please login"));
+                throw new RpcException(new Status(StatusCode.AlreadyExists, "Account already verified. Please login"));
             }
 
             var otpType = EnumMapper.Map<GrpcOtpType, OtpType>(request.Type);
@@ -279,7 +281,7 @@ namespace KwikNestaIdentity.Svc.Application.Services
 
             return new ResendOtpResponse
             {
-                Response =
+                Response = new StringResponse
                 {
                     Message = $"OTP successfully resent. Please check your email",
                     Status = 200
@@ -312,10 +314,10 @@ namespace KwikNestaIdentity.Svc.Application.Services
 
             return new PasswordResetResponse
             {
-                Response =
+                Response = new StringResponse
                 {
                     Message = $"Password reset request successful. Please enter the OTP sent to your email to complete the process",
-                    Status= 200
+                    Status = 200
                 }
             };
         }
@@ -342,7 +344,7 @@ namespace KwikNestaIdentity.Svc.Application.Services
                     throw new RpcException(new Status(StatusCode.NotFound, "No valid OTP found for this user"));
 
             bool isValid = CommonHelpers.VerifyOtp(request.Request.Otp, otpEntry.OtpHash, otpEntry.OtpSalt)
-                          && otpEntry.ExpiresAt.IsLaterThan(DateTime.UtcNow) && string.IsNullOrWhiteSpace(otpEntry.Token);
+                          && otpEntry.ExpiresAt.IsLaterThan(DateTime.UtcNow) && !string.IsNullOrWhiteSpace(otpEntry.Token);
 
             if (!isValid)
             {
@@ -366,7 +368,7 @@ namespace KwikNestaIdentity.Svc.Application.Services
 
             return new ChangeForgotPasswordResponse
             {
-                Response =
+                Response = new StringResponse
                 {
                     Message = "Password successfully reset. Please login with your new password",
                     Status = 200
@@ -410,7 +412,7 @@ namespace KwikNestaIdentity.Svc.Application.Services
 
             return new ChangePasswordResponse
             {
-                Response =
+                Response = new StringResponse
                 {
                     Message = "Password changed successfully. Please login with the new password",
                     Status = 200
@@ -437,8 +439,13 @@ namespace KwikNestaIdentity.Svc.Application.Services
             }
 
             var userToUpdate = await _userManager.FindByIdAsync(request.UserId) ??
-                throw new RpcException(new Status(StatusCode.NotFound, "User not found!")); ;
-           
+                throw new RpcException(new Status(StatusCode.NotFound, "User information not found."));
+
+            if(userToUpdate.Status == UserStatus.Suspended)
+            {
+                throw new RpcException(new Status(StatusCode.InvalidArgument, "User already suspended"));
+            }
+
             userToUpdate.Status = UserStatus.Suspended;
             userToUpdate.UpdatedAt = DateTime.UtcNow;
             userToUpdate.StatusChangedAt = DateTime.UtcNow;
@@ -453,8 +460,9 @@ namespace KwikNestaIdentity.Svc.Application.Services
             }
 
             // Notify the user.
+            var reason = EnumMapper.Map<GrpcSuspensionReason, SuspensionReasons>(request.Reason);
             await _pubSub.PublishAsync(NotificationMessage.Initialize(userToUpdate.Email!, userToUpdate.FirstName,
-                EmailType.AccountSuspension, request.Reason.GetDescription()),
+                EmailType.AccountSuspension, reason.GetDescription()),
                 routingKey: MQRoutingKey.AccountEmail.GetDescription());
 
             // Log action
@@ -465,10 +473,7 @@ namespace KwikNestaIdentity.Svc.Application.Services
             return new SuspendUserResponse
             {
                 Response =
-                {
-                    Message = "Account successfully suspended.",
-                    Status = 200
-                }
+                new StringResponse { Message = "Account successfully suspended.", Status = 200 }
             };
         }
 
@@ -511,10 +516,7 @@ namespace KwikNestaIdentity.Svc.Application.Services
             return new LiftUserSuspensionResponse
             {
                 Response =
-                {
-                    Message = "Account successfully reactivated.",
-                    Status = 200
-                }
+                new StringResponse { Message = "Account successfully reactivated.", Status = 200 }
             };
         }
 
@@ -562,10 +564,7 @@ namespace KwikNestaIdentity.Svc.Application.Services
             return new DeactivateAccountResponse
             {
                 Response =
-                {
-                    Message = ResponseMessages.AccountDeactivated,
-                    Status = 200
-                }
+                new StringResponse { Message = ResponseMessages.AccountDeactivated, Status = 200 }
             };
         }
 
@@ -588,16 +587,13 @@ namespace KwikNestaIdentity.Svc.Application.Services
 
             // Email the OTP to the user.
             await _pubSub.PublishAsync(NotificationMessage.Initialize(user.Email!,
-                user.FirstName, OtpType.AccountReactivation.ToEmailType()),
+                user.FirstName, otp, OtpType.AccountReactivation.ToEmailType()),
                 routingKey: MQRoutingKey.AccountEmail.GetDescription());
 
             return new RequestAccountReactivationResponse
             {
                 Response =
-                {
-                    Message = ResponseMessages.AccountReactivationRequested,
-                    Status = 200
-                }
+                new StringResponse { Message = ResponseMessages.AccountReactivationRequested, Status = 200 }
             };
         }
 
@@ -642,10 +638,7 @@ namespace KwikNestaIdentity.Svc.Application.Services
             return new ReactivateAccountResponse
             {
                 Response =
-                {
-                    Message = ResponseMessages.AccountReactivated,
-                    Status = 200
-                }
+                new StringResponse { Message = ResponseMessages.AccountReactivated, Status = 200 }
             };
         }
 

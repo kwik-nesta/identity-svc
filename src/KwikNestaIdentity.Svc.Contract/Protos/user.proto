@@ -11,10 +11,20 @@ service AppUserService {
 	rpc GetUserById (GetUserByIdRequest) returns (GetUserByIdResponse);
 	// Get users by their ids
 	rpc GetUsersByIds (GetUsersByIdsRequest) returns (GetUsersByIdsResponse);
+	//Get paged list of users
+	rpc GetPagedUsers (GetPagedUsersRequest) returns (GetPagedUsersResponse);
 }
 
 //--------------------Message-----------------------
 message Empty {}
+
+message GetPagedUsersRequest {
+  string search = 1;
+  int32 page = 2;
+  int32 size = 3;
+  optional GrpcUserGender gender = 4;
+  optional GrpcUserStatus status = 5;
+}
 
 message GetUserByIdRequest {
 	string user_id = 1;
@@ -33,6 +43,14 @@ message UpdateBasicUserDetailsRequest {
 
 
 //--------------------Response Models---------------
+message UserPageMetaData {
+  int32 total_count = 1;
+  int32 page = 2;
+  int32 size = 3;
+  bool has_previous = 4;
+  bool has_next = 5;
+}
+
 message GetLoggedInUserResponse {
 	User user = 1;
 }
@@ -52,6 +70,11 @@ message UpdateBasicUserDetailsResponse {
 message UserStringResponse {
 	string message = 1;
 	int32 status = 2;
+}
+
+message GetPagedUsersResponse {
+  repeated User users = 1;
+  UserPageMetaData meta_data = 2; 
 }
 
 message User {

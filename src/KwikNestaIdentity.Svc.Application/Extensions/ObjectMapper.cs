@@ -2,7 +2,7 @@
 using KwikNesta.Contracts.Enums;
 using KwikNesta.Contracts.Models;
 using KwikNestaIdentity.Svc.Contract.DTOs;
-using KwikNestaIdentity.Svc.Contract.Requests;
+using KwikNestaIdentity.Svc.Contract.Protos;
 using KwikNestaIdentity.Svc.Domain.Entities;
 using KwikNestaIdentity.Svc.Domain.Enums;
 
@@ -22,7 +22,7 @@ namespace KwikNestaIdentity.Svc.Application.Extensions
             };
         }
 
-        public static AppUser Map(this RegistrationRequest request)
+        public static AppUser Map(this RegisterRequest request)
         {
             return new AppUser
             {
@@ -32,7 +32,7 @@ namespace KwikNestaIdentity.Svc.Application.Extensions
                 Email = request.Email,
                 PhoneNumber = request.PhoneNumber,
                 UserName = request.Email,
-                Gender = request.Gender
+                Gender = EnumMapper.Map<GrpcGender, Gender>(request.Gender)
             };
         }
 
@@ -80,12 +80,12 @@ namespace KwikNestaIdentity.Svc.Application.Extensions
             };
         }
 
-        public static AppUser Map(this AppUser user, UpdateUserBasicDetailsRequest request)
+        public static AppUser Map(this AppUser user, UpdateBasicUserDetailsRequest request)
         {
             user.FirstName = request.FirstName;
             user.LastName = request.LastName;
             user.OtherName = request.OtherName;
-            user.Gender = request.Gender;
+            user.Gender = EnumMapper.Map<GrpcUserGender, Gender>(request.Gender);
             user.UpdatedAt = DateTime.UtcNow;
 
             return user;

@@ -3,7 +3,8 @@ using DiagnosKit.Core.Configurations;
 using DiagnosKit.Core.Extensions;
 using DiagnosKit.Core.Logging;
 using KwikNestaIdentity.Svc.API.Extensions;
-using KwikNestaIdentity.Svc.API.ProtoImpl;
+using KwikNestaIdentity.Svc.API.Filters;
+using KwikNestaIdentity.Svc.Application.Services;
 using KwikNestaIdentity.Svc.Infrastructure;
 using Microsoft.EntityFrameworkCore;
 
@@ -12,16 +13,11 @@ var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 
-builder.Services.AddControllers();
+//builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
 builder.Services
     .ConfigureIdentityAndDbContext(builder.Configuration)
-    .ConfigureCors()
-    .ConfigureServices()
-    .ConfigureSwaggerDocs()
-    .ConfigureApiVersioning()
     .AddCrossQueueHubRabbitMqBus(builder.Configuration)
     .ConfigureJwt(builder.Configuration)
     .AddDiagnosKitObservability(serviceName: builder.Environment.ApplicationName, serviceVersion: "1.0.0")
@@ -29,7 +25,10 @@ builder.Services
 
 builder.Host.ConfigureSerilogESSink();
 builder.Services.AddAuthorization();
-builder.Services.AddGrpc();
+builder.Services.AddGrpc(options =>
+{
+    options.Interceptors.Add<GrpcExceptionInterceptor>();
+});
 
 var app = builder.Build();
 
@@ -38,21 +37,15 @@ app.UseDiagnosKitPrometheus()
     .UseDiagnosKitErrorHandler()
     .UseDiagnosKitLogEnricher();
 
-// Map gRPC service
-app.MapGrpcService<IdentityGrpcService>();
-// Configure the HTTP request pipeline.
-if (app.Environment.IsDevelopment())
-{
-    app.UseSwagger();
-    app.UseSwaggerUI();
-}
-
 app.UseHttpsRedirection();
 
 app.UseAuthentication();
 app.UseAuthorization();
 
-app.MapControllers();
+// Map gRPC service
+app.MapGrpcService<GrpcAppUserService>();
+app.MapGrpcService<GrpcAuthenticationService>();
+
 if (app.Environment.IsDevelopment())
 {
     // Run migrations at startup (optional)
@@ -64,5 +57,4 @@ if (app.Environment.IsDevelopment())
 }
 
 await app.SeedInitialData(logger);
-app.UseCors("CorsPolicy");
 app.Run();

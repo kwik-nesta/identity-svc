@@ -1,9 +1,9 @@
 ﻿using FluentValidation;
-using KwikNestaIdentity.Svc.Contract.Requests;
+using KwikNestaIdentity.Svc.Contract.Protos;
 
 namespace KwikNestaIdentity.Svc.Application.Validations
 {
-    internal class UserBasicDetailsRequestValidator : AbstractValidator<UpdateUserBasicDetailsRequest>
+    internal class UserBasicDetailsRequestValidator : AbstractValidator<UpdateBasicUserDetailsRequest>
     {
         public UserBasicDetailsRequestValidator()
         {

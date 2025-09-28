@@ -25,8 +25,8 @@ namespace KwikNestaIdentity.Svc.API.Extensions
 
             // EF + Identity
             services.AddDbContext<AppDbContext>(options =>
-                options.UseSqlServer(connectionString));
-
+                options.UseNpgsql(connectionString));
+            
             services.AddIdentity<AppUser, IdentityRole>(options =>
             {
                 options.Password.RequireNonAlphanumeric = true;

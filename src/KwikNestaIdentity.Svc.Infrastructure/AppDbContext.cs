@@ -14,8 +14,10 @@ namespace KwikNestaIdentity.Svc.Infrastructure
 
         protected override void OnModelCreating(ModelBuilder builder)
         {
-            base.OnModelCreating(builder);
+            builder.HasDefaultSchema("identity-svc");
             builder.ApplyConfiguration(new RoleConfiguration());
+
+            base.OnModelCreating(builder);
         }
     }
 }

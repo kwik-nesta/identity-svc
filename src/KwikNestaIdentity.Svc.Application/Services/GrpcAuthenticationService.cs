@@ -164,7 +164,6 @@ namespace KwikNestaIdentity.Svc.Application.Services
             if (request == null || string.IsNullOrWhiteSpace(request.RefreshToken))
             {
                 throw new RpcException(new Status(StatusCode.PermissionDenied, "Invalid refresh token"));
-
             }
 
             var storedToken = await ValidateRefreshTokenAsync(request.RefreshToken) ??
@@ -742,7 +741,7 @@ namespace KwikNestaIdentity.Svc.Application.Services
                     notBefore: now,
                     expires: now.AddHours(_config.Span),
                     signingCredentials: creds
-                ); ;
+                );
             return jwt;
         }
 

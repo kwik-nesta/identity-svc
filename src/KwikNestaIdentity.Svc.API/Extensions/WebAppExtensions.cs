@@ -2,12 +2,25 @@
 using CSharpTypes.Extensions.String;
 using KwikNestaIdentity.Svc.Domain.Entities;
 using KwikNestaIdentity.Svc.Domain.Enums;
+using KwikNestaIdentity.Svc.Infrastructure;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 
 namespace KwikNestaIdentity.Svc.API.Extensions
 {
     public static class WebAppExtensions
     {
+        internal static void RunMigrations(this WebApplication app, bool alwaysRun)
+        {
+            if (app.Environment.IsDevelopment() || alwaysRun)
+            {
+                using (var scope = app.Services.CreateScope())
+                {
+                    var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+                    db.Database.Migrate();
+                }
+            }
+        }
         internal static async Task SeedInitialData(this WebApplication app, ILogger<Program> logger)
         {
             using var scope = app.Services.CreateScope();

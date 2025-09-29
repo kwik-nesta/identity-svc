@@ -46,15 +46,6 @@ app.UseAuthorization();
 app.MapGrpcService<GrpcAppUserService>();
 app.MapGrpcService<GrpcAuthenticationService>();
 
-if (app.Environment.IsDevelopment())
-{
-    // Run migrations at startup (optional)
-    using (var scope = app.Services.CreateScope())
-    {
-        var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
-        db.Database.Migrate();
-    }
-}
-
+app.RunMigrations(true);
 await app.SeedInitialData(logger);
 app.Run();

@@ -5,8 +5,6 @@ using DiagnosKit.Core.Logging;
 using KwikNestaIdentity.Svc.API.Extensions;
 using KwikNestaIdentity.Svc.API.Filters;
 using KwikNestaIdentity.Svc.Application.Services;
-using KwikNestaIdentity.Svc.Infrastructure;
-using Microsoft.EntityFrameworkCore;
 
 SerilogBootstrapper.UseBootstrapLogger();
 var builder = WebApplication.CreateBuilder(args);

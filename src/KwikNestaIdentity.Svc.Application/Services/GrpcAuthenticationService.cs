@@ -5,6 +5,7 @@ using CSharpTypes.Extensions.Date;
 using CSharpTypes.Extensions.Enumeration;
 using CSharpTypes.Extensions.Guid;
 using EFCore.CrudKit.Library.Data.Interfaces;
+using Google.Protobuf.WellKnownTypes;
 using Grpc.Core;
 using KwikNesta.Contracts.Enums;
 using KwikNesta.Contracts.Extensions;
@@ -24,6 +25,7 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Security.Cryptography;
 using System.Text;
+using Empty = Google.Protobuf.WellKnownTypes.Empty;
 
 namespace KwikNestaIdentity.Svc.Application.Services
 {
@@ -46,6 +48,17 @@ namespace KwikNestaIdentity.Svc.Application.Services
             _crudKit = crudKit;
             _pubSub = pubSub;
             _config = config.Value;
+        }
+
+        /// <summary>
+        ///Ping
+        /// </summary>
+        /// <param name="request">The request received from the client.</param>
+        /// <param name="context">The context of the server-side call handler being invoked.</param>
+        /// <returns>The response to send back to the client (wrapped by a task).</returns>
+        public override async Task<StringValue> Ping(Empty request, ServerCallContext context)
+        {
+            return await Task.FromResult(new StringValue { Value = "OK" });
         }
 
         /// <summary>

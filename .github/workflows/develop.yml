@@ -63,3 +63,16 @@ jobs:
           docker login -u ${{ secrets.HUB_USERNAME }} -p ${{ secrets.HUB_TEST_SECRET }}
           docker push ${{ secrets.HUB_USERNAME }}/kwik-nesta.identity.svc:${{ steps.get_latest_tag.outputs.tag }}
           docker push ${{ secrets.HUB_USERNAME }}/kwik-nesta.identity.svc:test
+
+      - name: Trigger Automatic Deploy on Render
+        run: |
+          curl -X POST ${{ secrets.IDENTITY_RENDER_HOOK }}
+
+      - name: Send Slack Notification
+        env:
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+        run: |
+          DEPLOYED_VERSION=${{ steps.get_latest_tag.outputs.tag }}
+          curl -X POST -H 'Content-type: application/json' --data "{
+            \"text\": \"🚀 *Kwik Nesta Identity Service Deployed!*\nVersion: \`$DEPLOYED_VERSION\`\nTag: \`test\`\nEnvironment: *Test*\nRender triggered successfully.\"
+          }" $SLACK_WEBHOOK_URL

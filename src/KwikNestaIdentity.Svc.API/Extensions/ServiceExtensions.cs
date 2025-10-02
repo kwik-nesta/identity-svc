@@ -7,7 +7,6 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Versioning;
-using Microsoft.AspNetCore.Server.Kestrel.Core;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
@@ -18,17 +17,6 @@ namespace KwikNestaIdentity.Svc.API.Extensions
 {
     public static class ServiceExtensions
     {
-        public static void ConfigureKestrel(this IWebHostBuilder host)
-        {
-            host.ConfigureKestrel(options =>
-            {
-                options.ListenAnyIP(8081, o =>
-                {
-                    o.Protocols = HttpProtocols.Http1AndHttp2;
-                });
-            });
-        }
-
         public static IServiceCollection ConfigureIdentityAndDbContext(this IServiceCollection services, IConfiguration configuration)
         {
             // Config

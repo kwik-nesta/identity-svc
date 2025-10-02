@@ -5,13 +5,12 @@ using DiagnosKit.Core.Logging;
 using KwikNestaIdentity.Svc.API.Extensions;
 using KwikNestaIdentity.Svc.API.Filters;
 using KwikNestaIdentity.Svc.Application.Services;
+using System.Net;
 
 SerilogBootstrapper.UseBootstrapLogger();
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
-builder.WebHost.ConfigureKestrel();
-//builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services
@@ -43,6 +42,11 @@ app.UseAuthorization();
 // Map gRPC service
 app.MapGrpcService<GrpcAppUserService>();
 app.MapGrpcService<GrpcAuthenticationService>();
+app.MapGet("/", () => new
+{
+    Status = HttpStatusCode.OK,
+    Message = "Kwik Nesta Identity Service is running..."
+});
 
 app.RunMigrations(true);
 await app.SeedInitialData(logger);

@@ -34,14 +34,16 @@ app.UseDiagnosKitPrometheus()
     .UseDiagnosKitErrorHandler()
     .UseDiagnosKitLogEnricher();
 
-app.UseHttpsRedirection();
+//app.UseHttpsRedirection();
 
 app.UseAuthentication();
+
+app.UseRouting();
 app.UseAuthorization();
 
-// Map gRPC service
-app.MapGrpcService<GrpcAppUserService>();
-app.MapGrpcService<GrpcAuthenticationService>();
+app.UseGrpcWeb(new GrpcWebOptions { DefaultEnabled = true });
+app.MapGrpcService<GrpcAppUserService>().EnableGrpcWeb();
+app.MapGrpcService<GrpcAuthenticationService>().EnableGrpcWeb();
 app.MapGet("/", () => new
 {
     Status = HttpStatusCode.OK,

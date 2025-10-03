@@ -10,9 +10,9 @@ namespace KwikNestaIdentity.Svc.Application.Validations
             GrpcSystemRole.SuperAdmin, GrpcSystemRole.Admin
         };
 
-        internal static bool IsAValidRole(GrpcSystemRole role)
+        internal static bool IsAValidRole(SystemRoles role)
         {
-            return role != GrpcSystemRole.None;
+            return role != SystemRoles.None;
         }
 
         internal static bool IsAMatch(string password, string comparePassword)

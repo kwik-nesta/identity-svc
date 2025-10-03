@@ -4,6 +4,7 @@ using DiagnosKit.Core.Extensions;
 using DiagnosKit.Core.Logging;
 using KwikNestaIdentity.Svc.API.Extensions;
 using KwikNestaIdentity.Svc.API.Filters;
+using KwikNestaIdentity.Svc.Application.Commands.Login;
 using KwikNestaIdentity.Svc.Application.Services;
 using System.Net;
 
@@ -12,13 +13,19 @@ var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
+builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services
     .ConfigureIdentityAndDbContext(builder.Configuration)
     .AddCrossQueueHubRabbitMqBus(builder.Configuration)
     .ConfigureJwt(builder.Configuration)
     .AddDiagnosKitObservability(serviceName: builder.Environment.ApplicationName, serviceVersion: "1.0.0")
+    .ConfigureSwaggerDocs()
+    .ConfigureApiVersioning()
     .AddLoggerManager();
+
+builder.Services.AddMediatR(cfg =>
+    cfg.RegisterServicesFromAssembly(typeof(LoginCommand).Assembly));
 
 builder.Host.ConfigureSerilogESSink();
 builder.Services.AddAuthorization();
@@ -34,12 +41,19 @@ app.UseDiagnosKitPrometheus()
     .UseDiagnosKitErrorHandler()
     .UseDiagnosKitLogEnricher();
 
-//app.UseHttpsRedirection();
+if (app.Environment.IsDevelopment())
+{
+    app.UseSwagger();
+    app.UseSwaggerUI();
+}
 
+app.UseHttpsRedirection();
 app.UseAuthentication();
 
 app.UseRouting();
 app.UseAuthorization();
+
+app.MapControllers();
 
 app.UseGrpcWeb(new GrpcWebOptions { DefaultEnabled = true });
 app.MapGrpcService<GrpcAppUserService>().EnableGrpcWeb();

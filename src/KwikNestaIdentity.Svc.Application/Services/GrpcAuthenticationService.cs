@@ -116,51 +116,51 @@ namespace KwikNestaIdentity.Svc.Application.Services
             }
 
             //validate inputs
-            var validate = new RegistrationValidator().Validate(request);
-            if (!validate.IsValid)
-            {
-                throw new RpcException(new Status(StatusCode.InvalidArgument, validate.Errors.FirstOrDefault()?.ErrorMessage ?? "Registration failed"));
-            }
+            //var validate = new RegistrationValidator().Validate(request);
+            //if (!validate.IsValid)
+            //{
+            //    throw new RpcException(new Status(StatusCode.InvalidArgument, validate.Errors.FirstOrDefault()?.ErrorMessage ?? "Registration failed"));
+            //}
 
             //check for existing user
-            var existingUser = await _userManager.FindByEmailAsync(request.Email);
-            if (existingUser != null)
-            {
-                throw new RpcException(new Status(StatusCode.PermissionDenied, $"A user already exists with this email: {request.Email}"));
-            }
+            //var existingUser = await _userManager.FindByEmailAsync(request.Email);
+            //if (existingUser != null)
+            //{
+            //    throw new RpcException(new Status(StatusCode.PermissionDenied, $"A user already exists with this email: {request.Email}"));
+            //}
 
-            //Insert record
-            var user = request.Map();
-            var createResult = await _userManager.CreateAsync(user, request.Password);
-            if (!createResult.Succeeded)
-            {
-                throw new RpcException(new Status(StatusCode.InvalidArgument, createResult.Errors?.FirstOrDefault()?.Description ?? "User registration failed. Please try again"));
-            }
+            ////Insert record
+            ////var user = request.Map();
+            //var createResult = await _userManager.CreateAsync(user, request.Password);
+            //if (!createResult.Succeeded)
+            //{
+            //    throw new RpcException(new Status(StatusCode.InvalidArgument, createResult.Errors?.FirstOrDefault()?.Description ?? "User registration failed. Please try again"));
+            //}
 
-            //add user to role
-            var role = EnumMapper.Map<GrpcSystemRole, SystemRoles>(request.SystemRole);
-            var roleResult = await _userManager.AddToRoleAsync(user, role.GetDescription());
-            if (!roleResult.Succeeded)
-            {
-                await _userManager.DeleteAsync(user);
-                throw new RpcException(new Status(StatusCode.InvalidArgument, $"Registration failed. {roleResult.Errors.FirstOrDefault()?.Description}"));
-            }
+            ////add user to role
+            //var role = EnumMapper.Map<GrpcSystemRole, SystemRoles>(request.SystemRole);
+            //var roleResult = await _userManager.AddToRoleAsync(user, role.GetDescription());
+            //if (!roleResult.Succeeded)
+            //{
+            //    await _userManager.DeleteAsync(user);
+            //    throw new RpcException(new Status(StatusCode.InvalidArgument, $"Registration failed. {roleResult.Errors.FirstOrDefault()?.Description}"));
+            //}
 
-            // Generate OTP
-            var otp = CommonHelpers.GenerateOtp();
-            var (hash, salt) = CommonHelpers.HashOtp(otp);
-            var otpEntry = user.Map(hash, salt);
-            await _crudKit.InsertAsync(otpEntry);
+            //// Generate OTP
+            //var otp = CommonHelpers.GenerateOtp();
+            //var (hash, salt) = CommonHelpers.HashOtp(otp);
+            //var otpEntry = user.Map(hash, salt);
+            //await _crudKit.InsertAsync(otpEntry);
 
-            // Send activation email to user
-            await _pubSub.PublishAsync(NotificationMessage.Initialize(user.Email!, user.FirstName,
-                otp, OtpType.AccountVerification.ToEmailType()),
-                routingKey: MQRoutingKey.AccountEmail.GetDescription());
+            //// Send activation email to user
+            //await _pubSub.PublishAsync(NotificationMessage.Initialize(user.Email!, user.FirstName,
+            //    otp, OtpType.AccountVerification.ToEmailType()),
+            //    routingKey: MQRoutingKey.AccountEmail.GetDescription());
 
             // Return to the user
             return new RegisterResponse
             {
-                Email = user.Email,
+                Email = "",
                 Message = "Registration successful. Please check your mail for your activation code"
             };
         }
@@ -400,11 +400,11 @@ namespace KwikNestaIdentity.Svc.Application.Services
             var user = await _userManager.FindByIdAsync(loggedInUserId) ?? 
                 throw new RpcException(new Status(StatusCode.NotFound, "Access denied"));
             
-            var validator = new ChangePasswordValidator().Validate(request);
-            if (!validator.IsValid)
-            {
-                throw new RpcException(new Status(StatusCode.InvalidArgument, validator.Errors.FirstOrDefault()?.ErrorMessage ?? "Invalid inputs."));
-            }
+            //var validator = new ChangePasswordValidator().Validate(request);
+            //if (!validator.IsValid)
+            //{
+            //    throw new RpcException(new Status(StatusCode.InvalidArgument, validator.Errors.FirstOrDefault()?.ErrorMessage ?? "Invalid inputs."));
+            //}
 
             var result = await _userManager.ChangePasswordAsync(user, request.CurrentPassword, request.NewPassword);
             if (!result.Succeeded)
@@ -657,11 +657,11 @@ namespace KwikNestaIdentity.Svc.Application.Services
         #region Private Methods
         private async Task<ApiBaseResponse> ValidateUser(LoginRequest request)
         {
-            var validation = new LoginValidator().Validate(request);
-            if (!validation.IsValid)
-            {
-                return new BadRequestResponse(validation.Errors.FirstOrDefault()?.ErrorMessage ?? "Invalid input");
-            }
+            //var validation = new LoginValidator().Validate(request);
+            //if (!validation.IsValid)
+            //{
+            //    return new BadRequestResponse(validation.Errors.FirstOrDefault()?.ErrorMessage ?? "Invalid input");
+            //}
 
             var user = await _userManager.FindByNameAsync(request.UserName);
             if (user == null)
@@ -669,10 +669,10 @@ namespace KwikNestaIdentity.Svc.Application.Services
                 return new NotFoundResponse("User not found");
             }
 
-            if (!user.EmailConfirmed || user.Status != UserStatus.Active)
-            {
-                return CommonHelpers.GetStatusResponse(user.Status);
-            }
+            //if (!user.EmailConfirmed || user.Status != UserStatus.Active)
+            //{
+            //    return CommonHelpers.GetStatusResponse(user.Status);
+            //}
 
             var check = await _signInManager.CheckPasswordSignInAsync(user, request.Password, lockoutOnFailure: true);
             if (!check.Succeeded)

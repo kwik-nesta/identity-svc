@@ -1,9 +1,10 @@
 ﻿using FluentValidation;
+using KwikNestaIdentity.Svc.Application.Commands.Register;
 using KwikNestaIdentity.Svc.Contract.Protos;
 
 namespace KwikNestaIdentity.Svc.Application.Validations
 {
-    public class RegistrationValidator : AbstractValidator<RegisterRequest>
+    public class RegistrationValidator : AbstractValidator<RegisterCommand>
     {
         public RegistrationValidator()
         {
@@ -25,9 +26,9 @@ namespace KwikNestaIdentity.Svc.Application.Validations
             RuleFor(x => x)
                 .Must(args => ValidationExtensions.IsAMatch(args.Password, args.ConfirmPassword))
                 .WithMessage("NewPassword and Confirm NewPassword must match");
-            RuleFor(x => x.SystemRole)
+            RuleFor(x => x.Role)
                 .IsInEnum().WithMessage("Invalid role type");
-            RuleFor(x => x).Must(args => ValidationExtensions.IsAValidRole(args.SystemRole))
+            RuleFor(x => x).Must(args => ValidationExtensions.IsAValidRole(args.Role))
                 .WithMessage("Please select a valid role");
             RuleFor(x => x.Gender)
                 .IsInEnum().WithMessage("Invalid Gender");

@@ -1,6 +1,7 @@
 ﻿using CSharpTypes.Extensions.Enumeration;
 using KwikNesta.Contracts.Enums;
 using KwikNesta.Contracts.Models;
+using KwikNestaIdentity.Svc.Application.Commands.Register;
 using KwikNestaIdentity.Svc.Contract.DTOs;
 using KwikNestaIdentity.Svc.Contract.Protos;
 using KwikNestaIdentity.Svc.Domain.Entities;
@@ -22,7 +23,7 @@ namespace KwikNestaIdentity.Svc.Application.Extensions
             };
         }
 
-        public static AppUser Map(this RegisterRequest request)
+        public static AppUser Map(this RegisterCommand request)
         {
             return new AppUser
             {
@@ -32,7 +33,7 @@ namespace KwikNestaIdentity.Svc.Application.Extensions
                 Email = request.Email,
                 PhoneNumber = request.PhoneNumber,
                 UserName = request.Email,
-                Gender = EnumMapper.Map<GrpcGender, Gender>(request.Gender)
+                Gender = request.Gender
             };
         }
 

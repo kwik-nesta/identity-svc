@@ -1,9 +1,9 @@
 ﻿using FluentValidation;
-using KwikNestaIdentity.Svc.Contract.Protos;
+using KwikNestaIdentity.Svc.Application.Commands.PasswordRequests;
 
 namespace KwikNestaIdentity.Svc.Application.Validations
 {
-    public class ChangePasswordValidator : AbstractValidator<ChangePasswordRequest>
+    public class ChangePasswordValidator : AbstractValidator<ChangePasswordCommand>
     {
         public ChangePasswordValidator()
         {

@@ -10,6 +10,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+	<PackageReference Include="Grpc.AspNetCore.Web" Version="2.71.0" />
 	<PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="8.0.19" />
 	<PackageReference Include="DiagnosKit.Core" Version="2.2.2" />
 	<PackageReference Include="Microsoft.AspNetCore.Mvc.Versioning" Version="5.1.0" />

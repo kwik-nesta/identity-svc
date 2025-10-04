@@ -31,7 +31,7 @@ namespace KwikNestaIdentity.Svc.API.GrpcServices
 
             return new GetLoggedInUserResponse
             {
-                User = MapData(response)
+                User = MapData(response.Data!)
             };
         }
 
@@ -73,7 +73,7 @@ namespace KwikNestaIdentity.Svc.API.GrpcServices
 
             return new GetUserByIdResponse
             {
-                User = MapData(response)
+                User = MapData(response?.Data!)
             };
         }
 
@@ -89,7 +89,7 @@ namespace KwikNestaIdentity.Svc.API.GrpcServices
 
             return new GetUsersByIdsResponse
             {
-                Users = { response.Select(MapData) }
+                Users = { response.Data?.Select(MapData) }
             };
         }
 
@@ -114,13 +114,13 @@ namespace KwikNestaIdentity.Svc.API.GrpcServices
             {
                 MetaData = new UserPageMetaData
                 {
-                    Page = response.Meta.Page,
-                    Size = response.Meta.Size,
-                    TotalCount = response.Meta.TotalCount,
-                    HasNext = response.Meta.HasNext,
-                    HasPrevious = response.Meta.HasPrevious
+                    Page = response.Data!.Meta.Page,
+                    Size = response.Data!.Meta.Size,
+                    TotalCount = response.Data!.Meta.TotalCount,
+                    HasNext = response.Data!.Meta.HasNext,
+                    HasPrevious = response.Data!.Meta.HasPrevious
                 },
-                Users = { response.Users.Select(MapData) }
+                Users = { response.Data!.Users.Select(MapData) }
             };
         }
 

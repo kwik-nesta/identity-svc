@@ -18,7 +18,7 @@ using System.Security.Claims;
 
 namespace KwikNestaIdentity.Svc.Application.Commands.Register
 {
-    public class RegisterCommandHandler : IRequestHandler<RegisterCommand, RegisterResponseDto>
+    public class RegisterCommandHandler : IRequestHandler<RegisterCommand, ApiResult<RegisterResponseDto>>
     {
         private readonly UserManager<AppUser> _userManager;
         private readonly IHttpContextAccessor _accessor;
@@ -36,7 +36,7 @@ namespace KwikNestaIdentity.Svc.Application.Commands.Register
             _crudKit = crudKit;
         }
 
-        public async Task<RegisterResponseDto> Handle(RegisterCommand request, CancellationToken cancellationToken)
+        public async Task<ApiResult<RegisterResponseDto>> Handle(RegisterCommand request, CancellationToken cancellationToken)
         {
             // For loggedin admin/super admin to register another admin
             var userContext = _accessor.HttpContext?.User;
@@ -88,7 +88,7 @@ namespace KwikNestaIdentity.Svc.Application.Commands.Register
                 routingKey: MQRoutingKey.AccountEmail.GetDescription());
 
             // Return to the user
-            return new RegisterResponseDto(user.Email, "Registration successful. Please check your mail for your activation code");
+            return new ApiResult<RegisterResponseDto>(new RegisterResponseDto(user.Email, "Registration successful. Please check your mail for your activation code"));
         }
 
         #region Private methods

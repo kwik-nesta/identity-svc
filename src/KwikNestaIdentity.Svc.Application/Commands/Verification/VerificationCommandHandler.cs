@@ -2,7 +2,7 @@
 using CSharpTypes.Extensions.Date;
 using EFCore.CrudKit.Library.Data.Interfaces;
 using KwikNesta.Contracts.Enums;
-using KwikNestaIdentity.Svc.Application.DTOs;
+using KwikNesta.Contracts.Models;
 using KwikNestaIdentity.Svc.Application.Helpers;
 using KwikNestaIdentity.Svc.Contract.Responses;
 using KwikNestaIdentity.Svc.Domain.Entities;
@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace KwikNestaIdentity.Svc.Application.Commands.Verification
 {
-    public class VerificationCommandHandler : IRequestHandler<VerificationCommand, GenericResponseDto>
+    public class VerificationCommandHandler : IRequestHandler<VerificationCommand, ApiResult<string>>
     {
         private readonly UserManager<AppUser> _userManager;
         private readonly IEFCoreCrudKit _crudKit;
@@ -24,7 +24,7 @@ namespace KwikNestaIdentity.Svc.Application.Commands.Verification
             _crudKit = crudKit;
         }
 
-        public async Task<GenericResponseDto> Handle(VerificationCommand request, CancellationToken cancellationToken)
+        public async Task<ApiResult<string>> Handle(VerificationCommand request, CancellationToken cancellationToken)
         {
             if (string.IsNullOrWhiteSpace(request.Otp) || string.IsNullOrWhiteSpace(request.Email))
             {
@@ -53,7 +53,7 @@ namespace KwikNestaIdentity.Svc.Application.Commands.Verification
             await _userManager.UpdateAsync(user);
             await _crudKit.DeleteAsync(otpEntry, cancellation: cancellationToken);
 
-            return new GenericResponseDto(200, "Account successfully verified. Please proceed to login");
+            return new ApiResult<string>("Account successfully verified. Please proceed to login");
         }
     }
 }

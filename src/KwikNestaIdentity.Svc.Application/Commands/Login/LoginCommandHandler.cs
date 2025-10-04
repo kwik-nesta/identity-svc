@@ -15,7 +15,7 @@ using Microsoft.Extensions.Options;
 
 namespace KwikNestaIdentity.Svc.Application.Commands.Login
 {
-    public class LoginCommandHandler : IRequestHandler<LoginCommand, LoginResponseDto>
+    public class LoginCommandHandler : IRequestHandler<LoginCommand, ApiResult<LoginResponseDto>>
     {
         private readonly IRabbitMQPubSub _pubSub;
         private readonly UserManager<AppUser> _userManager;
@@ -36,7 +36,7 @@ namespace KwikNestaIdentity.Svc.Application.Commands.Login
             _config = config.Value;
         }
 
-        public async Task<LoginResponseDto> Handle(LoginCommand request, CancellationToken cancellationToken)
+        public async Task<ApiResult<LoginResponseDto>> Handle(LoginCommand request, CancellationToken cancellationToken)
         {
             var (User, Roles) = await ValidateUser(request);
             
@@ -52,7 +52,7 @@ namespace KwikNestaIdentity.Svc.Application.Commands.Login
                 AuditDomain.Identity, AuditAction.LoggedIn),
                 routingKey: MQRoutingKey.AuditTrails.GetDescription());
 
-            return new LoginResponseDto(accessToken, Token);
+            return new ApiResult<LoginResponseDto>(new LoginResponseDto(accessToken, Token));
         }
 
         #region Private Methods

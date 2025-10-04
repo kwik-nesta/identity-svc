@@ -1,9 +1,10 @@
-﻿using KwikNestaIdentity.Svc.Application.DTOs;
+﻿using KwikNesta.Contracts.Models;
+using KwikNestaIdentity.Svc.Application.DTOs;
 using MediatR;
 
 namespace KwikNestaIdentity.Svc.Application.Commands.Login
 {
-    public record LoginCommand : IRequest<LoginResponseDto>
+    public record LoginCommand : IRequest<ApiResult<LoginResponseDto>>
     {
         public string UserName { get; set; } = string.Empty;
         public string Password { get; set; } = string.Empty;

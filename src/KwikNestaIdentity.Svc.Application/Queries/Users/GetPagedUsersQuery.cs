@@ -5,7 +5,7 @@ using MediatR;
 
 namespace KwikNestaIdentity.Svc.Application.Queries.Users
 {
-    public class GetPagedUsersQuery : PageQuery, IRequest<PagedUsersResponseDto>
+    public class GetPagedUsersQuery : PageQuery, IRequest<ApiResult<PagedUsersResponseDto>>
     {
         public string Search { get; set; } = string.Empty;
         public Gender? Gender { get; set; }

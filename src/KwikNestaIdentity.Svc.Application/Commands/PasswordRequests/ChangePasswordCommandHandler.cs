@@ -15,7 +15,7 @@ using System.Security.Claims;
 
 namespace KwikNestaIdentity.Svc.Application.Commands.PasswordRequests
 {
-    public class ChangePasswordCommandHandler : IRequestHandler<ChangePasswordCommand, GenericResponseDto>
+    public class ChangePasswordCommandHandler : IRequestHandler<ChangePasswordCommand, ApiResult<string>>
     {
         private readonly UserManager<AppUser> _userManager;
         private readonly IRabbitMQPubSub _pubSub;
@@ -30,7 +30,7 @@ namespace KwikNestaIdentity.Svc.Application.Commands.PasswordRequests
             _claimsPrincipal = accessor.HttpContext?.User;
         }
 
-        public async Task<GenericResponseDto> Handle(ChangePasswordCommand request, CancellationToken cancellationToken)
+        public async Task<ApiResult<string>> Handle(ChangePasswordCommand request, CancellationToken cancellationToken)
         {
             var loggedInUserId = CommonHelpers.GetUserId(_claimsPrincipal);
             var user = await _userManager.FindByIdAsync(loggedInUserId) ??
@@ -58,7 +58,7 @@ namespace KwikNestaIdentity.Svc.Application.Commands.PasswordRequests
                 AuditDomain.Identity, AuditAction.ChangedPassword),
                 routingKey: MQRoutingKey.AuditTrails.GetDescription());
 
-            return new GenericResponseDto(200, "Password changed successfully. Please login with the new password");
+            return new ApiResult<string>("Password changed successfully. Please login with the new password");
         }
     }
 }

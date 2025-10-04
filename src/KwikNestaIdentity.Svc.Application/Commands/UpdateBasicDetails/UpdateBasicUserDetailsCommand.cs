@@ -1,10 +1,10 @@
 ﻿using KwikNesta.Contracts.Enums;
-using KwikNestaIdentity.Svc.Application.DTOs;
+using KwikNesta.Contracts.Models;
 using MediatR;
 
 namespace KwikNestaIdentity.Svc.Application.Commands.UpdateBasicDetails
 {
-    public record UpdateBasicUserDetailsCommand : IRequest<GenericResponseDto>
+    public record UpdateBasicUserDetailsCommand : IRequest<ApiResult<string>>
     {
         public string FirstName { get; set; } = string.Empty;
         public string LastName { get; set; } = string.Empty;

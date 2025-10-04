@@ -1,4 +1,5 @@
-﻿using KwikNestaIdentity.Svc.Application.DTOs;
+﻿using KwikNesta.Contracts.Models;
+using KwikNestaIdentity.Svc.Application.DTOs;
 using KwikNestaIdentity.Svc.Application.Extensions;
 using KwikNestaIdentity.Svc.Domain.Entities;
 using MediatR;
@@ -7,7 +8,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace KwikNestaIdentity.Svc.Application.Queries.Users
 {
-    public class GetUsersQueryHandler : IRequestHandler<GetUsersQuery, List<CurrentUserDto>>
+    public class GetUsersQueryHandler : IRequestHandler<GetUsersQuery, ApiResult<List<CurrentUserDto>>>
     {
         private readonly UserManager<AppUser> _userManager;
 
@@ -16,13 +17,13 @@ namespace KwikNestaIdentity.Svc.Application.Queries.Users
             _userManager = userManager;
         }
 
-        public async Task<List<CurrentUserDto>> Handle(GetUsersQuery request, CancellationToken cancellationToken)
+        public async Task<ApiResult<List<CurrentUserDto>>> Handle(GetUsersQuery request, CancellationToken cancellationToken)
         {
             var users = await _userManager.Users
                .Where(u => request.Ids.Contains(u.Id))
                .ToListAsync(cancellationToken);
 
-            return users.Select(u => u.MapData()).ToList();
+            return new ApiResult<List<CurrentUserDto>>(users.Select(u => u.MapData()).ToList());
         }
     }
 }

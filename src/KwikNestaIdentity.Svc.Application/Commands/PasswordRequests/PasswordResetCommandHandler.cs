@@ -14,7 +14,7 @@ using Microsoft.AspNetCore.Identity;
 
 namespace KwikNestaIdentity.Svc.Application.Commands.PasswordRequests
 {
-    public class PasswordResetCommandHandler : IRequestHandler<PasswordResetCommand, GenericResponseDto>
+    public class PasswordResetCommandHandler : IRequestHandler<PasswordResetCommand, ApiResult<string>>
     {
         private readonly UserManager<AppUser> _userManager;
         private readonly IEFCoreCrudKit _crudKit;
@@ -29,7 +29,7 @@ namespace KwikNestaIdentity.Svc.Application.Commands.PasswordRequests
             _pubSub = pubSub;
         }
 
-        public async Task<GenericResponseDto> Handle(PasswordResetCommand request, CancellationToken cancellationToken)
+        public async Task<ApiResult<string>> Handle(PasswordResetCommand request, CancellationToken cancellationToken)
         {
             var user = await _userManager.FindByEmailAsync(request.Email) ??
                throw new NotFoundException($"No user found with this email: {request.Email}");
@@ -45,7 +45,7 @@ namespace KwikNestaIdentity.Svc.Application.Commands.PasswordRequests
                 otp, OtpType.ResetPassword.ToEmailType()),
                 routingKey: MQRoutingKey.AccountEmail.GetDescription());
 
-            return new GenericResponseDto(200, "Password reset request successful. Please enter the OTP sent to your email to complete the process");
+            return new ApiResult<string>("Password reset request successful. Please enter the OTP sent to your email to complete the process");
         }
     }
 }

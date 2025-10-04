@@ -5,7 +5,6 @@ using CSharpTypes.Extensions.Guid;
 using EFCore.CrudKit.Library.Data.Interfaces;
 using KwikNesta.Contracts.Enums;
 using KwikNesta.Contracts.Models;
-using KwikNestaIdentity.Svc.Application.DTOs;
 using KwikNestaIdentity.Svc.Application.Helpers;
 using KwikNestaIdentity.Svc.Contract.Responses;
 using KwikNestaIdentity.Svc.Domain.Entities;
@@ -17,7 +16,7 @@ using System.Security.Claims;
 
 namespace KwikNestaIdentity.Svc.Application.Commands.Deactivations
 {
-    public class DeactivationCommandHandler : IRequestHandler<DeactivationCommand, GenericResponseDto>
+    public class DeactivationCommandHandler : IRequestHandler<DeactivationCommand, ApiResult<string>>
     {
         private readonly UserManager<AppUser> _userManager;
         private readonly IEFCoreCrudKit _crudKit;
@@ -35,7 +34,7 @@ namespace KwikNestaIdentity.Svc.Application.Commands.Deactivations
             _claim = accessor.HttpContext?.User;
         }
 
-        public async Task<GenericResponseDto> Handle(DeactivationCommand request, CancellationToken cancellationToken)
+        public async Task<ApiResult<string>> Handle(DeactivationCommand request, CancellationToken cancellationToken)
         {
             var loggedInUserId = CommonHelpers.GetUserId(_claim);
 
@@ -70,7 +69,7 @@ namespace KwikNestaIdentity.Svc.Application.Commands.Deactivations
                 AuditDomain.Identity, AuditAction.DeactivatedAccount),
                 routingKey: MQRoutingKey.AuditTrails.GetDescription());
 
-            return new GenericResponseDto(200, ResponseMessages.AccountDeactivated);
+            return new ApiResult<string>(ResponseMessages.AccountDeactivated);
         }
     }
 }

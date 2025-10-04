@@ -4,7 +4,6 @@ using CSharpTypes.Extensions.Enumeration;
 using CSharpTypes.Extensions.Guid;
 using KwikNesta.Contracts.Enums;
 using KwikNesta.Contracts.Models;
-using KwikNestaIdentity.Svc.Application.DTOs;
 using KwikNestaIdentity.Svc.Application.Extensions;
 using KwikNestaIdentity.Svc.Application.Helpers;
 using KwikNestaIdentity.Svc.Application.Validations;
@@ -16,7 +15,7 @@ using System.Security.Claims;
 
 namespace KwikNestaIdentity.Svc.Application.Commands.UpdateBasicDetails
 {
-    public class UpdateBasicUserDetailsCommandHandler : IRequestHandler<UpdateBasicUserDetailsCommand, GenericResponseDto>
+    public class UpdateBasicUserDetailsCommandHandler : IRequestHandler<UpdateBasicUserDetailsCommand, ApiResult<string>>
     {
         private readonly UserManager<AppUser> _userManager;
         private readonly IRabbitMQPubSub _pubSub;
@@ -31,7 +30,7 @@ namespace KwikNestaIdentity.Svc.Application.Commands.UpdateBasicDetails
             _user = accessor.HttpContext?.User;
         }
 
-        public async Task<GenericResponseDto> Handle(UpdateBasicUserDetailsCommand request, CancellationToken cancellationToken)
+        public async Task<ApiResult<string>> Handle(UpdateBasicUserDetailsCommand request, CancellationToken cancellationToken)
         {
             var validate = new UserBasicDetailsRequestValidator().Validate(request);
             if (!validate.IsValid)
@@ -50,7 +49,7 @@ namespace KwikNestaIdentity.Svc.Application.Commands.UpdateBasicDetails
                 AuditDomain.Identity, AuditAction.UpdatedProfile),
                 routingKey: MQRoutingKey.AuditTrails.GetDescription());
 
-            return new GenericResponseDto(200, "User details successfully updated.");
+            return new ApiResult<string>("User details successfully updated.");
         }
     }
 }

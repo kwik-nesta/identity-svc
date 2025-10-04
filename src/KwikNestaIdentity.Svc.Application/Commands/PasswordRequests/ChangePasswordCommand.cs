@@ -1,9 +1,9 @@
-﻿using KwikNestaIdentity.Svc.Application.DTOs;
+﻿using KwikNesta.Contracts.Models;
 using MediatR;
 
 namespace KwikNestaIdentity.Svc.Application.Commands.PasswordRequests
 {
-    public record ChangePasswordCommand : IRequest<GenericResponseDto>
+    public record ChangePasswordCommand : IRequest<ApiResult<string>>
     {
         public string CurrentPassword { get; set; } = string.Empty;
         public string NewPassword { get; set; } = string.Empty;

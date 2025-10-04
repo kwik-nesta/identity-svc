@@ -1,10 +1,8 @@
 ﻿using API.Common.Response.Model.Exceptions;
 using CSharpTypes.Extensions.Enumeration;
 using CSharpTypes.Extensions.List;
-using KwikNestaIdentity.Svc.Application.DTOs;
-using KwikNestaIdentity.Svc.Contract.Protos;
+using KwikNesta.Contracts.Enums;
 using KwikNestaIdentity.Svc.Domain.Entities;
-using KwikNestaIdentity.Svc.Domain.Enums;
 using Microsoft.AspNetCore.Identity;
 using System.Security.Claims;
 using System.Security.Cryptography;

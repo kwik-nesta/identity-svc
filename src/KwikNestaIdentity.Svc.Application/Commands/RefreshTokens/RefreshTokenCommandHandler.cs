@@ -1,9 +1,10 @@
 ﻿using API.Common.Response.Model.Exceptions;
 using EFCore.CrudKit.Library.Data.Interfaces;
+using KwikNesta.Contracts.Enums;
+using KwikNesta.Contracts.Models;
 using KwikNestaIdentity.Svc.Application.DTOs;
 using KwikNestaIdentity.Svc.Application.Helpers;
 using KwikNestaIdentity.Svc.Domain.Entities;
-using KwikNestaIdentity.Svc.Domain.Enums;
 using MediatR;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -11,7 +12,7 @@ using Microsoft.Extensions.Options;
 
 namespace KwikNestaIdentity.Svc.Application.Commands.RefreshTokens
 {
-    public class RefreshTokenCommandHandler : IRequestHandler<RefreshTokenCommand, RefreshTokenResponseDto>
+    public class RefreshTokenCommandHandler : IRequestHandler<RefreshTokenCommand, ApiResult<RefreshTokenResponseDto>>
     {
         private readonly UserManager<AppUser> _userManager;
         private readonly IEFCoreCrudKit _crudKit;
@@ -26,7 +27,7 @@ namespace KwikNestaIdentity.Svc.Application.Commands.RefreshTokens
             _configs = options.Value;
         }
 
-        public async Task<RefreshTokenResponseDto> Handle(RefreshTokenCommand request, CancellationToken cancellationToken)
+        public async Task<ApiResult<RefreshTokenResponseDto>> Handle(RefreshTokenCommand request, CancellationToken cancellationToken)
         {
             if (request == null || string.IsNullOrWhiteSpace(request.RefreshToken))
             {
@@ -47,7 +48,7 @@ namespace KwikNestaIdentity.Svc.Application.Commands.RefreshTokens
             // generate new tokens
             var roles = (await _userManager.GetRolesAsync(user)).ToArray();
             var newAccessToken = AuthHelpers.CreateAccessToken(user, roles, _configs);
-            return new RefreshTokenResponseDto(newAccessToken, request.RefreshToken);
+            return new ApiResult<RefreshTokenResponseDto>(new RefreshTokenResponseDto(newAccessToken, request.RefreshToken));
         }
 
         #region Private Methods

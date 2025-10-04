@@ -7,7 +7,6 @@ using KwikNesta.Contracts.Models;
 using KwikNestaIdentity.Svc.Application.DTOs;
 using KwikNestaIdentity.Svc.Application.Helpers;
 using KwikNestaIdentity.Svc.Domain.Entities;
-using KwikNestaIdentity.Svc.Domain.Enums;
 using MediatR;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
@@ -15,7 +14,7 @@ using System.Security.Claims;
 
 namespace KwikNestaIdentity.Svc.Application.Commands.Suspension
 {
-    public class LiftSuspensionCommandHandler : IRequestHandler<LiftSuspensionCommand, GenericResponseDto>
+    public class LiftSuspensionCommandHandler : IRequestHandler<LiftSuspensionCommand, ApiResult<string>>
     {
         private readonly UserManager<AppUser> _userManager;
         private readonly IRabbitMQPubSub _pubSub;
@@ -30,7 +29,7 @@ namespace KwikNestaIdentity.Svc.Application.Commands.Suspension
             _claim = accessor.HttpContext?.User;
         }
 
-        public async Task<GenericResponseDto> Handle(LiftSuspensionCommand request, CancellationToken cancellationToken)
+        public async Task<ApiResult<string>> Handle(LiftSuspensionCommand request, CancellationToken cancellationToken)
         {
             var loggedInUserId = CommonHelpers.GetUserId(_claim);
             var loggedInUser = await _userManager.FindByIdAsync(loggedInUserId) ??
@@ -57,10 +56,10 @@ namespace KwikNestaIdentity.Svc.Application.Commands.Suspension
 
             // Log action
             await _pubSub.PublishAsync(AuditLog.Initialize(loggedInUserId, userToUpdate.Id, userToUpdate.Id.ToGuid(),
-                AuditDomain.User, AuditAction.ReactivatedAccount),
+                AuditDomain.Identity, AuditAction.ReactivatedAccount),
                 routingKey: MQRoutingKey.AuditTrails.GetDescription());
 
-            return new GenericResponseDto(200, "Account successfully reactivated.");
+            return new ApiResult<string>("Account successfully reactivated.");
         }
     }
 }

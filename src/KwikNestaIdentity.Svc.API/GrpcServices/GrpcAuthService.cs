@@ -11,7 +11,6 @@ using KwikNestaIdentity.Svc.Application.Commands.Suspension;
 using KwikNestaIdentity.Svc.Application.Commands.Verification;
 using KwikNestaIdentity.Svc.Application.Extensions;
 using KwikNestaIdentity.Svc.Contract.Protos;
-using KwikNestaIdentity.Svc.Domain.Enums;
 using MediatR;
 using Empty = Google.Protobuf.WellKnownTypes.Empty;
 
@@ -55,8 +54,8 @@ namespace KwikNestaIdentity.Svc.API.GrpcServices
             {
                 Tokens = new TokenResponse
                 {
-                    AccessToken = response.AccessToken,
-                    RefreshToken = response.RefreshToken
+                    AccessToken = response.Data?.AccessToken,
+                    RefreshToken = response.Data?.RefreshToken
                 }
             };
         }
@@ -84,7 +83,7 @@ namespace KwikNestaIdentity.Svc.API.GrpcServices
 
             return new RegisterResponse
             {
-                Email = response.Email,
+                Email = response.Data?.Email,
                 Message = response.Message
             };
         }
@@ -106,8 +105,8 @@ namespace KwikNestaIdentity.Svc.API.GrpcServices
             {
                 Token = new TokenResponse
                 {
-                    AccessToken = response.AccessToken,
-                    RefreshToken = response.RefreshToken
+                    AccessToken = response.Data?.AccessToken,
+                    RefreshToken = response.Data?.RefreshToken
                 }
             };
         }
@@ -130,7 +129,7 @@ namespace KwikNestaIdentity.Svc.API.GrpcServices
             {
                 Response = new StringResponse
                 {
-                    Message = response.Message,
+                    Message = response.Data,
                     Status = response.Status
                 }
             };
@@ -154,7 +153,7 @@ namespace KwikNestaIdentity.Svc.API.GrpcServices
             {
                 Response = new StringResponse
                 {
-                    Message = response.Message,
+                    Message = response.Data,
                     Status = response.Status
                 }
             };
@@ -177,7 +176,7 @@ namespace KwikNestaIdentity.Svc.API.GrpcServices
             {
                 Response = new StringResponse
                 {
-                    Message = response.Message,
+                    Message = response.Data,
                     Status = response.Status
                 }
             };
@@ -203,7 +202,7 @@ namespace KwikNestaIdentity.Svc.API.GrpcServices
             {
                 Response = new StringResponse
                 {
-                    Message = response.Message,
+                    Message = response.Data,
                     Status = response.Status
                 }
             };
@@ -228,7 +227,7 @@ namespace KwikNestaIdentity.Svc.API.GrpcServices
             {
                 Response = new StringResponse
                 {
-                    Message = response.Message,
+                    Message = response.Data,
                     Status = response.Status
                 }
             };
@@ -251,7 +250,7 @@ namespace KwikNestaIdentity.Svc.API.GrpcServices
             return new SuspendUserResponse
             {
                 Response =
-                new StringResponse { Message = response.Message, Status = response.Status }
+                new StringResponse { Message = response.Data, Status = response.Status }
             };
         }
 
@@ -271,7 +270,7 @@ namespace KwikNestaIdentity.Svc.API.GrpcServices
             return new LiftUserSuspensionResponse
             {
                 Response =
-                new StringResponse { Message = response.Message, Status = response.Status }
+                new StringResponse { Message = response.Data, Status = response.Status }
             };
         }
 
@@ -291,7 +290,7 @@ namespace KwikNestaIdentity.Svc.API.GrpcServices
             return new DeactivateAccountResponse
             {
                 Response =
-                new StringResponse { Message = response.Message, Status = response.Status }
+                new StringResponse { Message = response.Data, Status = response.Status }
             };
         }
 
@@ -311,7 +310,7 @@ namespace KwikNestaIdentity.Svc.API.GrpcServices
             return new RequestAccountReactivationResponse
             {
                 Response =
-                new StringResponse { Message = response.Message, Status = response.Status }
+                new StringResponse { Message = response.Data, Status = response.Status }
             };
         }
 
@@ -332,7 +331,7 @@ namespace KwikNestaIdentity.Svc.API.GrpcServices
             return new ReactivateAccountResponse
             {
                 Response =
-                new StringResponse { Message = response.Message, Status = response.Status }
+                new StringResponse { Message = response.Data, Status = response.Status }
             };
         }
     }

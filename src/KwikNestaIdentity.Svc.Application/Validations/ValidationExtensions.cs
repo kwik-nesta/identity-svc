@@ -1,5 +1,5 @@
-﻿using KwikNestaIdentity.Svc.Contract.Protos;
-using KwikNestaIdentity.Svc.Domain.Enums;
+﻿using KwikNesta.Contracts.Enums;
+using KwikNestaIdentity.Svc.Contract.Protos;
 
 namespace KwikNestaIdentity.Svc.Application.Validations
 {

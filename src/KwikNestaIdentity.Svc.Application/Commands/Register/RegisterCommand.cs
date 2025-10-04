@@ -1,10 +1,11 @@
-﻿using KwikNestaIdentity.Svc.Application.DTOs;
-using KwikNestaIdentity.Svc.Domain.Enums;
+﻿using KwikNesta.Contracts.Enums;
+using KwikNesta.Contracts.Models;
+using KwikNestaIdentity.Svc.Application.DTOs;
 using MediatR;
 
 namespace KwikNestaIdentity.Svc.Application.Commands.Register
 {
-    public record RegisterCommand : IRequest<RegisterResponseDto>
+    public record RegisterCommand : IRequest<ApiResult<RegisterResponseDto>>
     {
         public string FirstName { get; set; } = string.Empty;
         public string LastName { get; set; } = string.Empty;

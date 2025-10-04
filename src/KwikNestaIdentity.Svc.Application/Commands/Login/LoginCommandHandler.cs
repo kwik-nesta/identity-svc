@@ -9,14 +9,13 @@ using KwikNestaIdentity.Svc.Application.DTOs;
 using KwikNestaIdentity.Svc.Application.Helpers;
 using KwikNestaIdentity.Svc.Application.Validations;
 using KwikNestaIdentity.Svc.Domain.Entities;
-using KwikNestaIdentity.Svc.Domain.Enums;
 using MediatR;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Options;
 
 namespace KwikNestaIdentity.Svc.Application.Commands.Login
 {
-    public class LoginCommandHandler : IRequestHandler<LoginCommand, LoginResponseDto>
+    public class LoginCommandHandler : IRequestHandler<LoginCommand, ApiResult<LoginResponseDto>>
     {
         private readonly IRabbitMQPubSub _pubSub;
         private readonly UserManager<AppUser> _userManager;
@@ -37,7 +36,7 @@ namespace KwikNestaIdentity.Svc.Application.Commands.Login
             _config = config.Value;
         }
 
-        public async Task<LoginResponseDto> Handle(LoginCommand request, CancellationToken cancellationToken)
+        public async Task<ApiResult<LoginResponseDto>> Handle(LoginCommand request, CancellationToken cancellationToken)
         {
             var (User, Roles) = await ValidateUser(request);
             
@@ -50,10 +49,10 @@ namespace KwikNestaIdentity.Svc.Application.Commands.Login
             await _userManager.UpdateAsync(User);
             await _crudKit.InsertAsync(RefreshToken, cancellation: cancellationToken);
             await _pubSub.PublishAsync(AuditLog.Initialize(User.Id, User.Id, User.Id.ToGuid(),
-                AuditDomain.User, AuditAction.LoogedIn),
+                AuditDomain.Identity, AuditAction.LoggedIn),
                 routingKey: MQRoutingKey.AuditTrails.GetDescription());
 
-            return new LoginResponseDto(accessToken, Token);
+            return new ApiResult<LoginResponseDto>(new LoginResponseDto(accessToken, Token));
         }
 
         #region Private Methods

@@ -14,7 +14,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace KwikNestaIdentity.Svc.Application.Commands.PasswordRequests
 {
-    public class ChangeForgotPasswordCommandHandler : IRequestHandler<ChangeForgotPasswordCommand, GenericResponseDto>
+    public class ChangeForgotPasswordCommandHandler : IRequestHandler<ChangeForgotPasswordCommand, ApiResult<string>>
     {
         private readonly UserManager<AppUser> _userManager;
         private readonly IRabbitMQPubSub _pubSub;
@@ -29,7 +29,7 @@ namespace KwikNestaIdentity.Svc.Application.Commands.PasswordRequests
             _crudKit = crudKit;
         }
 
-        public async Task<GenericResponseDto> Handle(ChangeForgotPasswordCommand request, CancellationToken cancellationToken)
+        public async Task<ApiResult<string>> Handle(ChangeForgotPasswordCommand request, CancellationToken cancellationToken)
         {
             if (string.IsNullOrWhiteSpace(request.Email) || string.IsNullOrWhiteSpace(request.Otp))
             {
@@ -72,7 +72,7 @@ namespace KwikNestaIdentity.Svc.Application.Commands.PasswordRequests
                 EmailType.PasswordResetNotification),
                 routingKey: MQRoutingKey.AccountEmail.GetDescription());
 
-            return new GenericResponseDto(200, "Password successfully reset. Please login with your new password");
+            return new ApiResult<string>("Password successfully reset. Please login with your new password");
         }
     }
 }

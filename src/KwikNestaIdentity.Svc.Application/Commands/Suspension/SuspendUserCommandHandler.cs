@@ -5,10 +5,8 @@ using CSharpTypes.Extensions.Guid;
 using EFCore.CrudKit.Library.Data.Interfaces;
 using KwikNesta.Contracts.Enums;
 using KwikNesta.Contracts.Models;
-using KwikNestaIdentity.Svc.Application.DTOs;
 using KwikNestaIdentity.Svc.Application.Helpers;
 using KwikNestaIdentity.Svc.Domain.Entities;
-using KwikNestaIdentity.Svc.Domain.Enums;
 using MediatR;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
@@ -17,7 +15,7 @@ using System.Security.Claims;
 
 namespace KwikNestaIdentity.Svc.Application.Commands.Suspension
 {
-    public class SuspendUserCommandHandler : IRequestHandler<SuspendUserCommand, GenericResponseDto>
+    public class SuspendUserCommandHandler : IRequestHandler<SuspendUserCommand, ApiResult<string>>
     {
         private readonly UserManager<AppUser> _userManager;
         private readonly IEFCoreCrudKit _crudKit;
@@ -35,7 +33,7 @@ namespace KwikNestaIdentity.Svc.Application.Commands.Suspension
             _claimsPrincipal = accessor.HttpContext?.User;
         }
 
-        public async Task<GenericResponseDto> Handle(SuspendUserCommand request, CancellationToken cancellationToken)
+        public async Task<ApiResult<string>> Handle(SuspendUserCommand request, CancellationToken cancellationToken)
         {
             var loggedInUserId = CommonHelpers.GetUserId(_claimsPrincipal);
             var loggedInUser = await _userManager.FindByIdAsync(loggedInUserId) ??
@@ -75,10 +73,10 @@ namespace KwikNestaIdentity.Svc.Application.Commands.Suspension
 
             // Log action
             await _pubSub.PublishAsync(AuditLog.Initialize(loggedInUserId, userToUpdate.Id, userToUpdate.Id.ToGuid(),
-                AuditDomain.User, AuditAction.SuspendedAccount),
+                AuditDomain.Identity, AuditAction.SuspendedAccount),
                 routingKey: MQRoutingKey.AuditTrails.GetDescription());
 
-            return new GenericResponseDto(200, "Account successfully suspended.");
+            return new ApiResult<string>("Account successfully suspended.");
         }
     }
 }

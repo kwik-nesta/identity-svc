@@ -5,18 +5,16 @@ using CSharpTypes.Extensions.Enumeration;
 using EFCore.CrudKit.Library.Data.Interfaces;
 using KwikNesta.Contracts.Enums;
 using KwikNesta.Contracts.Models;
-using KwikNestaIdentity.Svc.Application.DTOs;
 using KwikNestaIdentity.Svc.Application.Helpers;
 using KwikNestaIdentity.Svc.Contract.Responses;
 using KwikNestaIdentity.Svc.Domain.Entities;
-using KwikNestaIdentity.Svc.Domain.Enums;
 using MediatR;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
 namespace KwikNestaIdentity.Svc.Application.Commands.Reactivations
 {
-    public class ReactivationCommandHandler : IRequestHandler<ReactivationCommand, GenericResponseDto>
+    public class ReactivationCommandHandler : IRequestHandler<ReactivationCommand, ApiResult<string>>
     {
         private readonly UserManager<AppUser> _userManager;
         private readonly IEFCoreCrudKit _crudKit;
@@ -31,7 +29,7 @@ namespace KwikNestaIdentity.Svc.Application.Commands.Reactivations
             _pubSub = pubSub;
         }
 
-        public async Task<GenericResponseDto> Handle(ReactivationCommand request, CancellationToken cancellationToken)
+        public async Task<ApiResult<string>> Handle(ReactivationCommand request, CancellationToken cancellationToken)
         {
             if (string.IsNullOrWhiteSpace(request.Otp) || string.IsNullOrWhiteSpace(request.Email))
             {
@@ -63,7 +61,7 @@ namespace KwikNestaIdentity.Svc.Application.Commands.Reactivations
                 user.FirstName, EmailType.AccountReactivationNotification),
                 routingKey: MQRoutingKey.AccountEmail.GetDescription());
 
-            return new GenericResponseDto(200, ResponseMessages.AccountReactivated);
+            return new ApiResult<string>(ResponseMessages.AccountReactivated);
         }
     }
 }

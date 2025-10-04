@@ -1,8 +1,8 @@
 ﻿using CSharpTypes.Extensions.Enumeration;
 using CSharpTypes.Extensions.String;
 using DiagnosKit.Core.Logging.Contracts;
+using KwikNesta.Contracts.Enums;
 using KwikNestaIdentity.Svc.Domain.Entities;
-using KwikNestaIdentity.Svc.Domain.Enums;
 using KwikNestaIdentity.Svc.Infrastructure;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;

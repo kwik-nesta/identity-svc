@@ -1,5 +1,5 @@
 ﻿using CSharpTypes.Extensions.Enumeration;
-using KwikNestaIdentity.Svc.Domain.Enums;
+using KwikNesta.Contracts.Enums;
 
 namespace KwikNestaIdentity.Svc.Contract.DTOs
 {

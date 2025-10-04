@@ -1,5 +1,6 @@
 ﻿using API.Common.Response.Model.Exceptions;
 using DiagnosKit.Core.Logging.Contracts;
+using KwikNesta.Contracts.Models;
 using Microsoft.AspNetCore.Diagnostics;
 using System.Net;
 using System.Text.Json;
@@ -41,12 +42,7 @@ namespace KwikNestaIdentity.Svc.API.Middlewares
                                     break;
                             }
 
-                            await context.Response.WriteAsync(JsonSerializer.Serialize(new
-                            {
-                                Status = context.Response.StatusCode,
-                                Message = message,
-                                Successful = false
-                            }));
+                            await context.Response.WriteAsync(JsonSerializer.Serialize(new ApiResult<string>(message, context.Response.StatusCode)));
                         }
                     });
                 });

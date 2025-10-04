@@ -1,7 +1,7 @@
 ﻿using CSharpTypes.Extensions.Enumeration;
 using EFCore.CrudKit.Library.Extensions;
+using KwikNesta.Contracts.Enums;
 using KwikNestaIdentity.Svc.Domain.Entities;
-using KwikNestaIdentity.Svc.Domain.Enums;
 using KwikNestaIdentity.Svc.Infrastructure;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;

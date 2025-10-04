@@ -1,11 +1,11 @@
 ﻿using Grpc.Core;
+using KwikNesta.Contracts.Enums;
 using KwikNestaIdentity.Svc.Application.Commands.UpdateBasicDetails;
 using KwikNestaIdentity.Svc.Application.DTOs;
 using KwikNestaIdentity.Svc.Application.Extensions;
 using KwikNestaIdentity.Svc.Application.Queries.LoggedInUser;
 using KwikNestaIdentity.Svc.Application.Queries.Users;
 using KwikNestaIdentity.Svc.Contract.Protos;
-using KwikNestaIdentity.Svc.Domain.Enums;
 using MediatR;
 
 namespace KwikNestaIdentity.Svc.API.GrpcServices
@@ -31,7 +31,7 @@ namespace KwikNestaIdentity.Svc.API.GrpcServices
 
             return new GetLoggedInUserResponse
             {
-                User = MapData(response)
+                User = MapData(response.Data!)
             };
         }
 
@@ -73,7 +73,7 @@ namespace KwikNestaIdentity.Svc.API.GrpcServices
 
             return new GetUserByIdResponse
             {
-                User = MapData(response)
+                User = MapData(response?.Data!)
             };
         }
 
@@ -89,7 +89,7 @@ namespace KwikNestaIdentity.Svc.API.GrpcServices
 
             return new GetUsersByIdsResponse
             {
-                Users = { response.Select(MapData) }
+                Users = { response.Data?.Select(MapData) }
             };
         }
 
@@ -114,13 +114,13 @@ namespace KwikNestaIdentity.Svc.API.GrpcServices
             {
                 MetaData = new UserPageMetaData
                 {
-                    Page = response.Meta.Page,
-                    Size = response.Meta.Size,
-                    TotalCount = response.Meta.TotalCount,
-                    HasNext = response.Meta.HasNext,
-                    HasPrevious = response.Meta.HasPrevious
+                    Page = response.Data!.Meta.Page,
+                    Size = response.Data!.Meta.Size,
+                    TotalCount = response.Data!.Meta.TotalCount,
+                    HasNext = response.Data!.Meta.HasNext,
+                    HasPrevious = response.Data!.Meta.HasPrevious
                 },
-                Users = { response.Users.Select(MapData) }
+                Users = { response.Data!.Users.Select(MapData) }
             };
         }
 

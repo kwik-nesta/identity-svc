@@ -15,7 +15,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace KwikNestaIdentity.Svc.Application.Commands.Verification
 {
-    public class ResendOtpCommandHandler : IRequestHandler<ResendOtpCommand, GenericResponseDto>
+    public class ResendOtpCommandHandler : IRequestHandler<ResendOtpCommand, ApiResult<string>>
     {
         private readonly UserManager<AppUser> _userManager;
         private readonly IEFCoreCrudKit _crudKit;
@@ -30,7 +30,7 @@ namespace KwikNestaIdentity.Svc.Application.Commands.Verification
             _pubSub = pubSub;
         }
 
-        public async Task<GenericResponseDto> Handle(ResendOtpCommand request, CancellationToken cancellationToken)
+        public async Task<ApiResult<string>> Handle(ResendOtpCommand request, CancellationToken cancellationToken)
         {
             var user = await _userManager.FindByEmailAsync(request.Email) ??
                 throw new NotFoundException("No user found with this email");
@@ -60,7 +60,7 @@ namespace KwikNestaIdentity.Svc.Application.Commands.Verification
                 await _crudKit.DeleteAsync(existingOtp, cancellation: cancellationToken);
             }
 
-            return new GenericResponseDto(200, $"OTP successfully resent. Please check your email");
+            return new ApiResult<string>("OTP successfully resent. Please check your email");
         }
     }
 }

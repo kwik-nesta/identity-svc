@@ -15,7 +15,7 @@ using Microsoft.AspNetCore.Identity;
 
 namespace KwikNestaIdentity.Svc.Application.Commands.Reactivations
 {
-    public class ReactivationRequestCommandHandler : IRequestHandler<ReactivationRequestCommand, GenericResponseDto>
+    public class ReactivationRequestCommandHandler : IRequestHandler<ReactivationRequestCommand, ApiResult<string>>
     {
         private readonly UserManager<AppUser> _userManager;
         private readonly IEFCoreCrudKit _crudKit;
@@ -30,7 +30,7 @@ namespace KwikNestaIdentity.Svc.Application.Commands.Reactivations
             _pubSub = pubSub;
         }
 
-        public async Task<GenericResponseDto> Handle(ReactivationRequestCommand request, CancellationToken cancellationToken)
+        public async Task<ApiResult<string>> Handle(ReactivationRequestCommand request, CancellationToken cancellationToken)
         {
             var user = await _userManager.FindByEmailAsync(request.Email) ??
                 throw new NotFoundException(ResponseMessages.UserNotFoundWithEmail);
@@ -46,7 +46,7 @@ namespace KwikNestaIdentity.Svc.Application.Commands.Reactivations
                 user.FirstName, otp, OtpType.AccountReactivation.ToEmailType()),
                 routingKey: MQRoutingKey.AccountEmail.GetDescription());
 
-            return new GenericResponseDto(200, ResponseMessages.AccountReactivationRequested);
+            return new ApiResult<string>(ResponseMessages.AccountReactivationRequested);
         }
     }
 }

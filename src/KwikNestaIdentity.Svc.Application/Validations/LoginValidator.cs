@@ -1,8 +1,8 @@
 ﻿using FluentValidation;
-using KwikNestaIdentity.Svc.Contract.Protos;
+using KwikNestaIdentity.Svc.Application.Commands.Login;
 namespace KwikNestaIdentity.Svc.Application.Validations
 {
-    public class LoginValidator : AbstractValidator<LoginRequest>
+    public class LoginValidator : AbstractValidator<LoginCommand>
     {
         public LoginValidator()
         {

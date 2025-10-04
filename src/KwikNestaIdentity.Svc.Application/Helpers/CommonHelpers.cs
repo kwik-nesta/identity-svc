@@ -1,6 +1,8 @@
-﻿using API.Common.Response.Model.Responses;
+﻿using API.Common.Response.Model.Exceptions;
 using CSharpTypes.Extensions.Enumeration;
 using CSharpTypes.Extensions.List;
+using KwikNestaIdentity.Svc.Application.DTOs;
+using KwikNestaIdentity.Svc.Contract.Protos;
 using KwikNestaIdentity.Svc.Domain.Entities;
 using KwikNestaIdentity.Svc.Domain.Enums;
 using Microsoft.AspNetCore.Identity;
@@ -12,19 +14,19 @@ namespace KwikNestaIdentity.Svc.Application.Helpers
 {
     public class CommonHelpers
     {
-        public static ApiBaseResponse GetStatusResponse(UserStatus status)
+        public static void GetStatusResponse(UserStatus status)
         {
-            return status switch
+            switch (status)
             {
-                UserStatus.PendingVerification
-                    => new ForbiddenResponse("You can't login at the moment. Please confirm your email."),
-                UserStatus.Suspended
-                    => new ForbiddenResponse("Your account has been suspended. Please contact support."),
-                UserStatus.Deactivated
-                    => new ForbiddenResponse("Your account has been deactivated. You can start the reactivation process or contact support"),
-                _ => throw new NotImplementedException()
-
-            };
+                case UserStatus.PendingVerification:
+                    throw new ForbiddenException("You can't login at the moment. Please confirm your email.");
+                case UserStatus.Deactivated:
+                    throw new ForbiddenException("Your account has been suspended. Please contact support.");
+                case UserStatus.Suspended:
+                    throw new ForbiddenException("Your account has been suspended. Please contact support.");
+                default:
+                    break;
+            }
         }
 
         public static async Task<List<SystemRoles>> GetUserRoles(UserManager<AppUser> userManager, ClaimsPrincipal? userClaim)

@@ -1,28 +1,15 @@
 ﻿using CSharpTypes.Extensions.Enumeration;
 using KwikNesta.Contracts.Enums;
-using KwikNesta.Contracts.Models;
-using KwikNestaIdentity.Svc.Contract.DTOs;
-using KwikNestaIdentity.Svc.Contract.Protos;
+using KwikNestaIdentity.Svc.Application.Commands.Register;
+using KwikNestaIdentity.Svc.Application.Commands.UpdateBasicDetails;
+using KwikNestaIdentity.Svc.Application.DTOs;
 using KwikNestaIdentity.Svc.Domain.Entities;
-using KwikNestaIdentity.Svc.Domain.Enums;
 
 namespace KwikNestaIdentity.Svc.Application.Extensions
 {
     internal static class ObjectMapper
     {
-        public static NotificationMessage Map(this AppUser user, EmailType emailType, SuspensionReasons? reason = null)
-        {
-            return new NotificationMessage
-            {
-                EmailAddress = user.Email!,
-                ReceipientName = user.FirstName,
-                Type = emailType,
-                Subject = emailType.GetDescription(),
-                Reason = reason?.GetDescription()
-            };
-        }
-
-        public static AppUser Map(this RegisterRequest request)
+        public static AppUser Map(this RegisterCommand request)
         {
             return new AppUser
             {
@@ -32,11 +19,16 @@ namespace KwikNestaIdentity.Svc.Application.Extensions
                 Email = request.Email,
                 PhoneNumber = request.PhoneNumber,
                 UserName = request.Email,
-                Gender = EnumMapper.Map<GrpcGender, Gender>(request.Gender)
+                Gender = request.Gender
             };
         }
 
-        public static OtpEntry Map(this AppUser user, string hash, string salt, OtpType otpType = OtpType.AccountVerification, string? token = null, int span = 10)
+        public static OtpEntry Map(this AppUser user,
+                                   string hash,
+                                   string salt,
+                                   OtpType otpType = OtpType.AccountVerification,
+                                   string? token = null,
+                                   int span = 10)
         {
             return new OtpEntry
             {
@@ -49,43 +41,27 @@ namespace KwikNestaIdentity.Svc.Application.Extensions
             };
         }
 
-        public static NotificationMessage Map(this AppUser user, string otp, DateTime expires, EmailType emailType = EmailType.AccountActivation)
+        public static CurrentUserDto MapData(this AppUser user)
         {
-            return new NotificationMessage
-            {
-                EmailAddress = user.Email!,
-                ReceipientName = user.FirstName,
-                Type = emailType,
-                Subject = emailType.GetDescription(),
-                Otp = new OtpData
-                {
-                    Value = otp,
-                    Span = (int)Math.Ceiling(expires.Subtract(DateTime.UtcNow).TotalMinutes)
-                }
-            };
-        }
-
-        public static UserLeanDto Map(this AppUser user)
-        {
-            return new UserLeanDto
+            return new CurrentUserDto
             {
                 Id = user.Id,
                 Email = user.Email!,
-                PhoneNumber = user.PhoneNumber!,
                 FirstName = user.FirstName,
                 LastName = user.LastName,
-                MiddleName = user.OtherName,
-                Status = user.Status,
-                Gender = user.Gender.GetDescription()
+                MiddleName = user.OtherName ?? string.Empty,
+                PhoneNumber = user.PhoneNumber,
+                Gender = user.Gender.GetDescription(),
+                Status = user.Status.GetDescription()
             };
         }
 
-        public static AppUser Map(this AppUser user, UpdateBasicUserDetailsRequest request)
+        public static AppUser Map(this AppUser user, UpdateBasicUserDetailsCommand request)
         {
             user.FirstName = request.FirstName;
             user.LastName = request.LastName;
             user.OtherName = request.OtherName;
-            user.Gender = EnumMapper.Map<GrpcUserGender, Gender>(request.Gender);
+            user.Gender = request.Gender;
             user.UpdatedAt = DateTime.UtcNow;
 
             return user;

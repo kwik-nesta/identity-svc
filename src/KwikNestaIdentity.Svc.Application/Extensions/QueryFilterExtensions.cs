@@ -1,4 +1,5 @@
-﻿using KwikNestaIdentity.Svc.Contract.Protos;
+﻿using KwikNestaIdentity.Svc.Application.Queries.Users;
+using KwikNestaIdentity.Svc.Contract.Protos;
 using KwikNestaIdentity.Svc.Domain.Entities;
 using KwikNestaIdentity.Svc.Domain.Enums;
 
@@ -19,15 +20,15 @@ namespace KwikNestaIdentity.Svc.Application.Extensions
                 (!string.IsNullOrEmpty(u.OtherName) && u.OtherName.Contains(search, StringComparison.OrdinalIgnoreCase)));
         }
 
-        public static IEnumerable<AppUser> Filter(this IEnumerable<AppUser> users, GetPagedUsersRequest request)
+        public static IEnumerable<AppUser> Filter(this IEnumerable<AppUser> users, GetPagedUsersQuery request)
         {
-            if (request.HasGender)
+            if (request.Gender.HasValue)
             {
-                users = users.Where(u => u.Gender == EnumMapper.Map<GrpcUserGender, Gender>(request.Gender));
+                users = users.Where(u => u.Gender == request.Gender.Value);
             }
-            if (request.HasStatus)
+            if (request.Status.HasValue)
             {
-                users = users.Where(u => u.Status == EnumMapper.Map<GrpcUserStatus,UserStatus>(request.Status));
+                users = users.Where(u => u.Status == request.Status.Value);
             }
 
             return users;

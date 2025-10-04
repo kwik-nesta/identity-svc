@@ -1,7 +1,8 @@
 ﻿using API.Common.Response.Model.Exceptions;
-using API.Common.Response.Model.Responses;
 using CSharpTypes.Extensions.Enumeration;
 using CSharpTypes.Extensions.List;
+using KwikNestaIdentity.Svc.Application.DTOs;
+using KwikNestaIdentity.Svc.Contract.Protos;
 using KwikNestaIdentity.Svc.Domain.Entities;
 using KwikNestaIdentity.Svc.Domain.Enums;
 using Microsoft.AspNetCore.Identity;
@@ -28,7 +29,7 @@ namespace KwikNestaIdentity.Svc.Application.Helpers
             }
         }
 
-    public static async Task<List<SystemRoles>> GetUserRoles(UserManager<AppUser> userManager, ClaimsPrincipal? userClaim)
+        public static async Task<List<SystemRoles>> GetUserRoles(UserManager<AppUser> userManager, ClaimsPrincipal? userClaim)
         {
             var roles = new List<SystemRoles>();
             var userId = GetUserId(userClaim);
@@ -89,5 +90,5 @@ namespace KwikNestaIdentity.Svc.Application.Helpers
             var computedHash = Convert.ToBase64String(hash);
             return computedHash == storedHash;
         }
-}
+    }
 }

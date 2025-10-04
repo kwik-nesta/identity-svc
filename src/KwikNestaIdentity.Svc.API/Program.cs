@@ -2,10 +2,12 @@ using CrossQueue.Hub.Shared.Extensions;
 using DiagnosKit.Core.Configurations;
 using DiagnosKit.Core.Extensions;
 using DiagnosKit.Core.Logging;
+using DiagnosKit.Core.Logging.Contracts;
 using KwikNestaIdentity.Svc.API.Extensions;
 using KwikNestaIdentity.Svc.API.Filters;
+using KwikNestaIdentity.Svc.API.GrpcServices;
+using KwikNestaIdentity.Svc.API.Middlewares;
 using KwikNestaIdentity.Svc.Application.Commands.Login;
-using KwikNestaIdentity.Svc.Application.Services;
 using System.Net;
 
 SerilogBootstrapper.UseBootstrapLogger();
@@ -36,10 +38,9 @@ builder.Services.AddGrpc(options =>
 
 var app = builder.Build();
 
-var logger = app.Services.GetRequiredService<ILogger<Program>>();
-app.UseDiagnosKitPrometheus()
-    .UseDiagnosKitErrorHandler()
-    .UseDiagnosKitLogEnricher();
+var logger = app.Services.GetRequiredService<ILoggerManager>();
+app.UseGlobalExceptionHandler(logger);
+app.UseDiagnosKitPrometheus();
 
 if (app.Environment.IsDevelopment())
 {
@@ -56,8 +57,8 @@ app.UseAuthorization();
 app.MapControllers();
 
 app.UseGrpcWeb(new GrpcWebOptions { DefaultEnabled = true });
-app.MapGrpcService<GrpcAppUserService>().EnableGrpcWeb();
-app.MapGrpcService<GrpcAuthenticationService>().EnableGrpcWeb();
+app.MapGrpcService<GrpcUserService>().EnableGrpcWeb();
+app.MapGrpcService<GrpcAuthService>().EnableGrpcWeb();
 app.MapGet("/", () => new
 {
     Status = HttpStatusCode.OK,

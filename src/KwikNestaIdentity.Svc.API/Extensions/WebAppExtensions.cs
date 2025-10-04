@@ -1,5 +1,6 @@
 ﻿using CSharpTypes.Extensions.Enumeration;
 using CSharpTypes.Extensions.String;
+using DiagnosKit.Core.Logging.Contracts;
 using KwikNestaIdentity.Svc.Domain.Entities;
 using KwikNestaIdentity.Svc.Domain.Enums;
 using KwikNestaIdentity.Svc.Infrastructure;
@@ -21,19 +22,19 @@ namespace KwikNestaIdentity.Svc.API.Extensions
                 }
             }
         }
-        internal static async Task SeedInitialData(this WebApplication app, ILogger<Program> logger)
+        internal static async Task SeedInitialData(this WebApplication app, ILoggerManager logger)
         {
             using var scope = app.Services.CreateScope();
             await SeedAdminUser(scope, logger);
         }
 
-        private static async Task SeedAdminUser(IServiceScope scope, ILogger<Program> logger)
+        private static async Task SeedAdminUser(IServiceScope scope, ILoggerManager logger)
         {
             var userManager = scope.ServiceProvider.GetRequiredService<UserManager<AppUser>>();
             var config = scope.ServiceProvider.GetRequiredService<IConfiguration>();
             if (userManager == null || config == null)
             {
-                logger.LogWarning("UserManager and/or IConfiguration is null");
+                logger.LogWarn("UserManager and/or IConfiguration is null");
                 return;
             }
 
@@ -42,14 +43,14 @@ namespace KwikNestaIdentity.Svc.API.Extensions
             var phone = config["AdminUser:PhoneNumber"];
             if (email!.IsNullOrEmpty() || password!.IsNullOrEmpty() || phone!.IsNullOrEmpty())
             {
-                logger.LogWarning("Email, phone, and/or password is null or empty string");
+                logger.LogWarn("Email, phone, and/or password is null or empty string");
                 return;
             }
 
             var exists = userManager.Users.Any(u => u.Email != null && u.Email.Equals(email));
             if (!exists)
             {
-                logger.LogInformation($"Starting user seeding...");
+                logger.LogInfo($"Starting user seeding...");
                 var user = new AppUser
                 {
                     FirstName = "System",
@@ -78,11 +79,11 @@ namespace KwikNestaIdentity.Svc.API.Extensions
                     return;
                 }
 
-                logger.LogInformation("User registration successful");
+                logger.LogInfo("User registration successful");
                 return;
             }
 
-            logger.LogInformation("Seeding skipped.... User already exist in the database.");
+            logger.LogInfo("Seeding skipped.... User already exist in the database.");
         }
     }
 }

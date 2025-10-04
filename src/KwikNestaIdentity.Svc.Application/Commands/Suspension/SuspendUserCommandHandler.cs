@@ -8,7 +8,6 @@ using KwikNesta.Contracts.Models;
 using KwikNestaIdentity.Svc.Application.DTOs;
 using KwikNestaIdentity.Svc.Application.Helpers;
 using KwikNestaIdentity.Svc.Domain.Entities;
-using KwikNestaIdentity.Svc.Domain.Enums;
 using MediatR;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
@@ -75,7 +74,7 @@ namespace KwikNestaIdentity.Svc.Application.Commands.Suspension
 
             // Log action
             await _pubSub.PublishAsync(AuditLog.Initialize(loggedInUserId, userToUpdate.Id, userToUpdate.Id.ToGuid(),
-                AuditDomain.User, AuditAction.SuspendedAccount),
+                AuditDomain.Identity, AuditAction.SuspendedAccount),
                 routingKey: MQRoutingKey.AuditTrails.GetDescription());
 
             return new GenericResponseDto(200, "Account successfully suspended.");

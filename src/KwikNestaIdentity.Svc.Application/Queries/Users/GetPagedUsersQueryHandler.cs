@@ -1,10 +1,10 @@
 ﻿using API.Common.Response.Model.Exceptions;
 using CSharpTypes.Extensions.Enumeration;
+using KwikNesta.Contracts.Enums;
 using KwikNesta.Contracts.Extensions;
 using KwikNestaIdentity.Svc.Application.DTOs;
 using KwikNestaIdentity.Svc.Application.Extensions;
 using KwikNestaIdentity.Svc.Domain.Entities;
-using KwikNestaIdentity.Svc.Domain.Enums;
 using MediatR;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;

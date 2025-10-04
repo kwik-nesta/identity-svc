@@ -1,4 +1,4 @@
-﻿using KwikNestaIdentity.Svc.Domain.Enums;
+﻿using KwikNesta.Contracts.Enums;
 using Microsoft.AspNetCore.Identity;
 using System.ComponentModel.DataAnnotations;
 

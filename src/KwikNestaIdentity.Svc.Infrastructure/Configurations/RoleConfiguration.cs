@@ -1,5 +1,5 @@
 ﻿using CSharpTypes.Extensions.Enumeration;
-using KwikNestaIdentity.Svc.Domain.Enums;
+using KwikNesta.Contracts.Enums;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;

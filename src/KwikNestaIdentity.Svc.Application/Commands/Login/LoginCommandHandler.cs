@@ -9,7 +9,6 @@ using KwikNestaIdentity.Svc.Application.DTOs;
 using KwikNestaIdentity.Svc.Application.Helpers;
 using KwikNestaIdentity.Svc.Application.Validations;
 using KwikNestaIdentity.Svc.Domain.Entities;
-using KwikNestaIdentity.Svc.Domain.Enums;
 using MediatR;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Options;
@@ -50,7 +49,7 @@ namespace KwikNestaIdentity.Svc.Application.Commands.Login
             await _userManager.UpdateAsync(User);
             await _crudKit.InsertAsync(RefreshToken, cancellation: cancellationToken);
             await _pubSub.PublishAsync(AuditLog.Initialize(User.Id, User.Id, User.Id.ToGuid(),
-                AuditDomain.User, AuditAction.LoogedIn),
+                AuditDomain.Identity, AuditAction.LoggedIn),
                 routingKey: MQRoutingKey.AuditTrails.GetDescription());
 
             return new LoginResponseDto(accessToken, Token);

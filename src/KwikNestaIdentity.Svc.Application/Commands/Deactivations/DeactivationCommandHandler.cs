@@ -9,7 +9,6 @@ using KwikNestaIdentity.Svc.Application.DTOs;
 using KwikNestaIdentity.Svc.Application.Helpers;
 using KwikNestaIdentity.Svc.Contract.Responses;
 using KwikNestaIdentity.Svc.Domain.Entities;
-using KwikNestaIdentity.Svc.Domain.Enums;
 using MediatR;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
@@ -68,7 +67,7 @@ namespace KwikNestaIdentity.Svc.Application.Commands.Deactivations
 
             // Log action
             await _pubSub.PublishAsync(AuditLog.Initialize(loggedInUserId, user.Id, user.Id.ToGuid(),
-                AuditDomain.User, AuditAction.DeactivatedAccount),
+                AuditDomain.Identity, AuditAction.DeactivatedAccount),
                 routingKey: MQRoutingKey.AuditTrails.GetDescription());
 
             return new GenericResponseDto(200, ResponseMessages.AccountDeactivated);

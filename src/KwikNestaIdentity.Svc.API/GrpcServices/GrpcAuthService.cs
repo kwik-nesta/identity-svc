@@ -11,7 +11,6 @@ using KwikNestaIdentity.Svc.Application.Commands.Suspension;
 using KwikNestaIdentity.Svc.Application.Commands.Verification;
 using KwikNestaIdentity.Svc.Application.Extensions;
 using KwikNestaIdentity.Svc.Contract.Protos;
-using KwikNestaIdentity.Svc.Domain.Enums;
 using MediatR;
 using Empty = Google.Protobuf.WellKnownTypes.Empty;
 

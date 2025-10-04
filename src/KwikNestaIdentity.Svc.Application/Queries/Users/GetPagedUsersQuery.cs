@@ -1,6 +1,6 @@
-﻿using KwikNesta.Contracts.Models;
+﻿using KwikNesta.Contracts.Enums;
+using KwikNesta.Contracts.Models;
 using KwikNestaIdentity.Svc.Application.DTOs;
-using KwikNestaIdentity.Svc.Domain.Enums;
 using MediatR;
 
 namespace KwikNestaIdentity.Svc.Application.Queries.Users

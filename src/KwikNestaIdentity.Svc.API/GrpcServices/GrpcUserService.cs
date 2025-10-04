@@ -1,11 +1,11 @@
 ﻿using Grpc.Core;
+using KwikNesta.Contracts.Enums;
 using KwikNestaIdentity.Svc.Application.Commands.UpdateBasicDetails;
 using KwikNestaIdentity.Svc.Application.DTOs;
 using KwikNestaIdentity.Svc.Application.Extensions;
 using KwikNestaIdentity.Svc.Application.Queries.LoggedInUser;
 using KwikNestaIdentity.Svc.Application.Queries.Users;
 using KwikNestaIdentity.Svc.Contract.Protos;
-using KwikNestaIdentity.Svc.Domain.Enums;
 using MediatR;
 
 namespace KwikNestaIdentity.Svc.API.GrpcServices

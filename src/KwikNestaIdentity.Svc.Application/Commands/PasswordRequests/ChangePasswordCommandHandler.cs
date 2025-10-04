@@ -55,7 +55,7 @@ namespace KwikNestaIdentity.Svc.Application.Commands.PasswordRequests
 
             // Log action
             await _pubSub.PublishAsync(AuditLog.Initialize(loggedInUserId, user.Id, user.Id.ToGuid(),
-                AuditDomain.User, AuditAction.ChangedPassword),
+                AuditDomain.Identity, AuditAction.ChangedPassword),
                 routingKey: MQRoutingKey.AuditTrails.GetDescription());
 
             return new GenericResponseDto(200, "Password changed successfully. Please login with the new password");

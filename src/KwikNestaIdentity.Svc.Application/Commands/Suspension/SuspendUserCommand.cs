@@ -1,5 +1,5 @@
-﻿using KwikNestaIdentity.Svc.Application.DTOs;
-using KwikNestaIdentity.Svc.Domain.Enums;
+﻿using KwikNesta.Contracts.Enums;
+using KwikNestaIdentity.Svc.Application.DTOs;
 using MediatR;
 
 namespace KwikNestaIdentity.Svc.Application.Commands.Suspension

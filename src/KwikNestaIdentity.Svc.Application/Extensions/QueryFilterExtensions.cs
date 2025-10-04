@@ -1,7 +1,5 @@
 ﻿using KwikNestaIdentity.Svc.Application.Queries.Users;
-using KwikNestaIdentity.Svc.Contract.Protos;
 using KwikNestaIdentity.Svc.Domain.Entities;
-using KwikNestaIdentity.Svc.Domain.Enums;
 
 namespace KwikNestaIdentity.Svc.Application.Extensions
 {

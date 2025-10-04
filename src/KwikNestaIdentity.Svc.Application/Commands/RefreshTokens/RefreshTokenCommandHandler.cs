@@ -1,9 +1,9 @@
 ﻿using API.Common.Response.Model.Exceptions;
 using EFCore.CrudKit.Library.Data.Interfaces;
+using KwikNesta.Contracts.Enums;
 using KwikNestaIdentity.Svc.Application.DTOs;
 using KwikNestaIdentity.Svc.Application.Helpers;
 using KwikNestaIdentity.Svc.Domain.Entities;
-using KwikNestaIdentity.Svc.Domain.Enums;
 using MediatR;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;

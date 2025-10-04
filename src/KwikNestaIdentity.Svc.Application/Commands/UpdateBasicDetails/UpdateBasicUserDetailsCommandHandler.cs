@@ -47,7 +47,7 @@ namespace KwikNestaIdentity.Svc.Application.Commands.UpdateBasicDetails
             await _userManager.UpdateAsync(existingUser);
 
             await _pubSub.PublishAsync(AuditLog.Initialize(existingUser.Id, existingUser.Id, existingUser.Id.ToGuid(),
-                AuditDomain.User, AuditAction.UpdatedProfile),
+                AuditDomain.Identity, AuditAction.UpdatedProfile),
                 routingKey: MQRoutingKey.AuditTrails.GetDescription());
 
             return new GenericResponseDto(200, "User details successfully updated.");

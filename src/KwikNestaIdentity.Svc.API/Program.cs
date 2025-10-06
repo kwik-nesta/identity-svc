@@ -30,6 +30,8 @@ builder.Services.AddMediatR(cfg =>
     cfg.RegisterServicesFromAssembly(typeof(LoginCommand).Assembly));
 
 builder.Host.ConfigureSerilogESSink();
+Serilog.Debugging.SelfLog.Enable(msg => Console.WriteLine($"SERILOG: {msg}"));
+
 builder.Services.AddAuthorization();
 builder.Services.AddGrpc(options =>
 {

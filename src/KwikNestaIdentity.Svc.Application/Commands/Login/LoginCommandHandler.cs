@@ -3,6 +3,7 @@ using CrossQueue.Hub.Services.Interfaces;
 using CSharpTypes.Extensions.Enumeration;
 using CSharpTypes.Extensions.Guid;
 using EFCore.CrudKit.Library.Data.Interfaces;
+using KwikNesta.Contracts.Commands;
 using KwikNesta.Contracts.Enums;
 using KwikNesta.Contracts.Models;
 using KwikNestaIdentity.Svc.Application.DTOs;
@@ -48,9 +49,15 @@ namespace KwikNestaIdentity.Svc.Application.Commands.Login
 
             await _userManager.UpdateAsync(User);
             await _crudKit.InsertAsync(RefreshToken, cancellation: cancellationToken);
-            await _pubSub.PublishAsync(AuditLog.Initialize(User.Id, User.Id, User.Id.ToGuid(),
-                AuditDomain.Identity, AuditAction.LoggedIn),
-                routingKey: MQRoutingKey.AuditTrails.GetDescription());
+
+            await _pubSub.PublishAsync(new AuditCommand
+            {
+                PerformedBy = User.Id,
+                DomainId = User.Id.ToGuid(),
+                Domain = AuditDomain.Identity,
+                Action = AuditAction.LoggedIn,
+                TargetId = User.Id
+            }, routingKey: MQRoutingKey.AuditTrails.GetDescription());
 
             return new ApiResult<LoginResponseDto>(new LoginResponseDto(accessToken, Token));
         }

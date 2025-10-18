@@ -3,6 +3,7 @@ using CrossQueue.Hub.Services.Interfaces;
 using CSharpTypes.Extensions.Enumeration;
 using CSharpTypes.Extensions.Guid;
 using EFCore.CrudKit.Library.Data.Interfaces;
+using KwikNesta.Contracts.Commands;
 using KwikNesta.Contracts.Enums;
 using KwikNesta.Contracts.Models;
 using KwikNestaIdentity.Svc.Application.Helpers;
@@ -72,9 +73,22 @@ namespace KwikNestaIdentity.Svc.Application.Commands.Suspension
                 routingKey: MQRoutingKey.AccountEmail.GetDescription());
 
             // Log action
-            await _pubSub.PublishAsync(AuditLog.Initialize(loggedInUserId, userToUpdate.Id, userToUpdate.Id.ToGuid(),
-                AuditDomain.Identity, AuditAction.SuspendedAccount),
-                routingKey: MQRoutingKey.AuditTrails.GetDescription());
+            var audit = new AuditCommand
+            {
+                PerformedBy = loggedInUserId,
+                DomainId = userToUpdate.Id.ToGuid(),
+                Domain = AuditDomain.Identity,
+                Action = AuditAction.SuspendedAccount,
+                TargetId = userToUpdate.Id
+            };
+            await _pubSub.PublishAsync(new AuditCommand
+            {
+                PerformedBy = loggedInUserId,
+                DomainId = userToUpdate.Id.ToGuid(),
+                Domain = AuditDomain.Identity,
+                Action = AuditAction.SuspendedAccount,
+                TargetId = userToUpdate.Id
+            }, routingKey: MQRoutingKey.AuditTrails.GetDescription());
 
             return new ApiResult<string>("Account successfully suspended.");
         }

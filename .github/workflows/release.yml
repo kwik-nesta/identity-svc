@@ -80,7 +80,7 @@ jobs:
 
       - name: Trigger Automatic Deploy on Render
         run: |
-          curl -X POST ${{ secrets.RENDER_DEPLOY_HOOK_URL }}
+          curl -X POST ${{ secrets.IDENTITY_LIVE_RENDER_HOOK }}
 
       - name: Send Slack Notification
         env:

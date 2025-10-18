@@ -1,0 +1,219 @@
+syntax = "proto3";
+
+option csharp_namespace = "KwikNestaIdentity.Svc.Contract.Protos";
+import "google/protobuf/empty.proto";
+import "google/protobuf/wrappers.proto";
+
+service AuthenticationService {
+	//Ping
+	rpc Ping (google.protobuf.Empty) returns (google.protobuf.StringValue);
+	// Login
+	rpc Login (LoginRequest) returns (LoginResponse);
+	// Register
+	rpc Register (RegisterRequest) returns (RegisterResponse);
+	// Generate Refresh Token
+	rpc Refresh (RefreshTokenRequest) returns (RefreshTokenResponse);
+	// Verify Account
+	rpc VerifyAccount (VerifyAccountRequest) returns (VerifyAccountResponse);
+	// Resend OTP
+	rpc ResendOtp (ResendOtpRequest) returns (ResendOtpResponse);
+	// Request password reset
+	rpc PasswordReset (PasswordResetRequest) returns (PasswordResetResponse);
+	// Change password after request
+	rpc ChangeForgotPassword (ChangeForgotPasswordRequest) returns (ChangeForgotPasswordResponse);
+	// Change known password
+	rpc ChangePassword (ChangePasswordRequest) returns (ChangePasswordResponse);
+	// Suspend user
+	rpc SuspendUser (SuspendUserRequest) returns (SuspendUserResponse);
+	// Lift user suspension
+	rpc LiftUserSuspension (LiftUserSuspensionRequest) returns (LiftUserSuspensionResponse);
+	// Deactivate Account
+	rpc DeactivateAccount (DeactivateAccountRequest) returns (DeactivateAccountResponse);
+	// Request account Reactivate
+	rpc RequestAccountReactivation (RequestAccountReactivationRequest) returns (RequestAccountReactivationResponse);
+	// Reactivate Account
+	rpc ReactivateAccount (ReactivateAccountRequest) returns (ReactivateAccountResponse);
+}
+
+// ----------------------Messages-------------------------
+
+message EmailRequest {
+	string email = 1;
+}
+
+message UserIdRequest {
+	string user_id = 1;
+}
+
+message OtpRequest {
+	string email = 1;
+	string otp = 2;
+}
+
+message LoginRequest {
+	string user_name = 1;
+	string password = 2;
+}
+
+message RegisterRequest {
+	string first_name = 1;
+	string last_name = 2;
+	string middle_name = 3;
+	string email = 4;
+	string phone_number = 5;
+	string password = 6;
+	string confirm_password = 7;
+	GrpcGender gender = 8;
+	GrpcSystemRole system_role = 9;
+}
+
+message RefreshTokenRequest {
+	string refresh_token = 1;
+}
+
+message VerifyAccountRequest {
+	OtpRequest request = 1;
+}
+
+message ResendOtpRequest {
+	string email = 1;
+	GrpcOtpType type = 2;
+}
+
+message PasswordResetRequest {
+	EmailRequest request = 1;
+}
+
+message ChangeForgotPasswordRequest {
+	OtpRequest request = 1;
+	string new_password = 3;
+	string confirm_password = 4;
+}
+
+message ChangePasswordRequest {
+	string current_password = 1;
+	string new_password = 2;
+	string confirm_new_password = 3;
+}
+
+message SuspendUserRequest {
+	string user_id = 1;
+	GrpcSuspensionReason reason = 2;
+}
+
+message LiftUserSuspensionRequest {
+	UserIdRequest request = 1;
+}
+
+message DeactivateAccountRequest {
+	UserIdRequest request = 1;
+}
+
+message RequestAccountReactivationRequest {
+	EmailRequest request = 1;
+}
+
+message ReactivateAccountRequest {
+	OtpRequest request = 1;
+}
+
+//--------------------Response Models--------------------------------
+message StringResponse {
+	string message = 1;
+	int32 status = 2;
+}
+
+message TokenResponse {
+	string access_token = 1;
+	string refresh_token = 2;
+}
+
+message LoginResponse {
+	TokenResponse tokens = 1;
+}
+
+message RegisterResponse {
+	string message = 1;
+	string email = 2;
+}
+
+message RefreshTokenResponse {
+	TokenResponse token = 1;
+}
+
+message VerifyAccountResponse {
+	StringResponse response = 1;
+}
+
+message ResendOtpResponse {
+	StringResponse response = 1;
+}
+
+message PasswordResetResponse {
+	StringResponse response = 1;
+}
+
+message ChangeForgotPasswordResponse {
+	StringResponse response = 1;
+}
+
+message ChangePasswordResponse {
+	StringResponse response = 1;
+}
+
+message SuspendUserResponse {
+	StringResponse response = 1;
+}
+
+message LiftUserSuspensionResponse {
+	StringResponse response = 1;
+}
+
+message DeactivateAccountResponse {
+	StringResponse response = 1;
+}
+
+message RequestAccountReactivationResponse {
+	StringResponse response = 1;
+}
+
+message ReactivateAccountResponse {
+	StringResponse response = 1;
+}
+
+
+// -----------------Enums------------------------
+enum GrpcGender {
+	OTHERS = 0;
+	MALE = 1;
+	FEMALE = 2;
+}
+
+enum GrpcSystemRole {
+	 NONE = 0;
+     SUPER_ADMIN = 1;
+     ADMIN = 2;
+     LAND_LORD = 3;
+     TENANT = 4;
+     AGENT = 5;
+}
+
+enum GrpcOtpType {
+	UNKNOWN = 0;
+	ACCOUNT_VERIFICATION = 1;
+    RESET_PASSWORD = 2;
+    ACCOUNT_REACTIVATION = 3;
+}
+
+enum GrpcSuspensionReason {
+	SUSPICIOUS_ACTIVITY = 0;
+	CompromisedAccount = 1;
+	POLICY_VIOLATION = 2;
+	FRAUDULENT_BEHAVIOUS = 3;
+	PAYMENT_FAILURE = 4;
+	PENDING_INVESTIGATION = 5;
+	DUPLICATE_ACCOUNT = 6;
+	USER_REPORTS = 7;
+	SYSTEM_ABUSE = 8;
+	OTHER = 9;
+}

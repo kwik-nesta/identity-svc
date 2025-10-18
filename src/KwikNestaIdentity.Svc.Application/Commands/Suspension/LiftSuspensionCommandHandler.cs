@@ -2,6 +2,7 @@
 using CrossQueue.Hub.Services.Interfaces;
 using CSharpTypes.Extensions.Enumeration;
 using CSharpTypes.Extensions.Guid;
+using KwikNesta.Contracts.Commands;
 using KwikNesta.Contracts.Enums;
 using KwikNesta.Contracts.Models;
 using KwikNestaIdentity.Svc.Application.DTOs;
@@ -55,9 +56,14 @@ namespace KwikNestaIdentity.Svc.Application.Commands.Suspension
                 routingKey: MQRoutingKey.AccountEmail.GetDescription());
 
             // Log action
-            await _pubSub.PublishAsync(AuditLog.Initialize(loggedInUserId, userToUpdate.Id, userToUpdate.Id.ToGuid(),
-                AuditDomain.Identity, AuditAction.ReactivatedAccount),
-                routingKey: MQRoutingKey.AuditTrails.GetDescription());
+            await _pubSub.PublishAsync(new AuditCommand
+            {
+                PerformedBy = loggedInUserId,
+                DomainId = userToUpdate.Id.ToGuid(),
+                Domain = AuditDomain.Identity,
+                Action = AuditAction.ReactivatedAccount,
+                TargetId = userToUpdate.Id
+            }, routingKey: MQRoutingKey.AuditTrails.GetDescription());
 
             return new ApiResult<string>("Account successfully reactivated.");
         }

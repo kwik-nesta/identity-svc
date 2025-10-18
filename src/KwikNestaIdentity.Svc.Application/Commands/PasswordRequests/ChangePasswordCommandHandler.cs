@@ -2,9 +2,9 @@
 using CrossQueue.Hub.Services.Interfaces;
 using CSharpTypes.Extensions.Enumeration;
 using CSharpTypes.Extensions.Guid;
+using KwikNesta.Contracts.Commands;
 using KwikNesta.Contracts.Enums;
 using KwikNesta.Contracts.Models;
-using KwikNestaIdentity.Svc.Application.DTOs;
 using KwikNestaIdentity.Svc.Application.Helpers;
 using KwikNestaIdentity.Svc.Application.Validations;
 using KwikNestaIdentity.Svc.Domain.Entities;
@@ -54,9 +54,14 @@ namespace KwikNestaIdentity.Svc.Application.Commands.PasswordRequests
                 routingKey: MQRoutingKey.AccountEmail.GetDescription());
 
             // Log action
-            await _pubSub.PublishAsync(AuditLog.Initialize(loggedInUserId, user.Id, user.Id.ToGuid(),
-                AuditDomain.Identity, AuditAction.ChangedPassword),
-                routingKey: MQRoutingKey.AuditTrails.GetDescription());
+            await _pubSub.PublishAsync(new AuditCommand
+            {
+                PerformedBy = loggedInUserId,
+                DomainId = user.Id.ToGuid(),
+                Domain = AuditDomain.Identity,
+                Action = AuditAction.ChangedPassword,
+                TargetId = user.Id
+            }, routingKey: MQRoutingKey.AuditTrails.GetDescription());
 
             return new ApiResult<string>("Password changed successfully. Please login with the new password");
         }

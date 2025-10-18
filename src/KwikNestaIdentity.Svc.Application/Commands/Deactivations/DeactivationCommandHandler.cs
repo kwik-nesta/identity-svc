@@ -3,6 +3,7 @@ using CrossQueue.Hub.Services.Interfaces;
 using CSharpTypes.Extensions.Enumeration;
 using CSharpTypes.Extensions.Guid;
 using EFCore.CrudKit.Library.Data.Interfaces;
+using KwikNesta.Contracts.Commands;
 using KwikNesta.Contracts.Enums;
 using KwikNesta.Contracts.Models;
 using KwikNestaIdentity.Svc.Application.Helpers;
@@ -65,9 +66,14 @@ namespace KwikNestaIdentity.Svc.Application.Commands.Deactivations
                 routingKey: MQRoutingKey.AccountEmail.GetDescription());
 
             // Log action
-            await _pubSub.PublishAsync(AuditLog.Initialize(loggedInUserId, user.Id, user.Id.ToGuid(),
-                AuditDomain.Identity, AuditAction.DeactivatedAccount),
-                routingKey: MQRoutingKey.AuditTrails.GetDescription());
+            await _pubSub.PublishAsync(new AuditCommand
+            {
+                PerformedBy = loggedInUserId,
+                DomainId = user.Id.ToGuid(),
+                Domain = AuditDomain.Identity,
+                Action = AuditAction.DeactivatedAccount,
+                TargetId = user.Id
+            }, routingKey: MQRoutingKey.AuditTrails.GetDescription());
 
             return new ApiResult<string>(ResponseMessages.AccountDeactivated);
         }

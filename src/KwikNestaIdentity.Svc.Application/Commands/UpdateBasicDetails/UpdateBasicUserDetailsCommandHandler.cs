@@ -2,6 +2,7 @@
 using CrossQueue.Hub.Services.Interfaces;
 using CSharpTypes.Extensions.Enumeration;
 using CSharpTypes.Extensions.Guid;
+using KwikNesta.Contracts.Commands;
 using KwikNesta.Contracts.Enums;
 using KwikNesta.Contracts.Models;
 using KwikNestaIdentity.Svc.Application.Extensions;
@@ -45,9 +46,14 @@ namespace KwikNestaIdentity.Svc.Application.Commands.UpdateBasicDetails
             existingUser = existingUser.Map(request);
             await _userManager.UpdateAsync(existingUser);
 
-            await _pubSub.PublishAsync(AuditLog.Initialize(existingUser.Id, existingUser.Id, existingUser.Id.ToGuid(),
-                AuditDomain.Identity, AuditAction.UpdatedProfile),
-                routingKey: MQRoutingKey.AuditTrails.GetDescription());
+            await _pubSub.PublishAsync(new AuditCommand
+            {
+                PerformedBy = existingUser.Id,
+                DomainId = existingUser.Id.ToGuid(),
+                Domain = AuditDomain.Identity,
+                Action = AuditAction.UpdatedProfile,
+                TargetId = existingUser.Id
+            }, routingKey: MQRoutingKey.AuditTrails.GetDescription());
 
             return new ApiResult<string>("User details successfully updated.");
         }

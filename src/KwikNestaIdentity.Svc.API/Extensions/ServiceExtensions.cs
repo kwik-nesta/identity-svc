@@ -1,6 +1,8 @@
 ﻿using CSharpTypes.Extensions.Enumeration;
+using DiagnosKit.Core.Configurations;
 using EFCore.CrudKit.Library.Extensions;
 using KwikNesta.Contracts.Enums;
+using KwikNesta.Contracts.Settings;
 using KwikNestaIdentity.Svc.Domain.Entities;
 using KwikNestaIdentity.Svc.Infrastructure;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -17,6 +19,22 @@ namespace KwikNestaIdentity.Svc.API.Extensions
 {
     public static class ServiceExtensions
     {
+        public static void ConfigureESSink(this IHostBuilder host,
+                                           IConfiguration configuration)
+        {
+            host.ConfigureSerilogESSink(opt =>
+            {
+                var settings = configuration.GetSection("ElasticSearch")
+                    .Get<ElasticSettings>() ?? throw new ArgumentNullException("ElasticSearch");
+
+                opt.Url = settings.Url;
+                opt.Username = settings.UserName;
+                opt.Password = settings.Password;
+                opt.IndexPrefix = settings.IndexPrefix;
+                opt.IndexFormat = settings.IndexFormat;
+            });
+        }
+
         public static IServiceCollection ConfigureIdentityAndDbContext(this IServiceCollection services, IConfiguration configuration)
         {
             // Config

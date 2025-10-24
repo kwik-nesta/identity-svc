@@ -29,7 +29,10 @@ builder.Services
 builder.Services.AddMediatR(cfg =>
     cfg.RegisterServicesFromAssembly(typeof(LoginCommand).Assembly));
 
-builder.Host.ConfigureSerilogESSink();
+if (!builder.Environment.IsDevelopment())
+{
+    builder.Host.ConfigureESSink(builder.Configuration);
+}
 
 builder.Services.AddAuthorization();
 builder.Services.AddGrpc(options =>

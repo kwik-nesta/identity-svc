@@ -29,7 +29,10 @@ builder.Services
 builder.Services.AddMediatR(cfg =>
     cfg.RegisterServicesFromAssembly(typeof(LoginCommand).Assembly));
 
-builder.Host.ConfigureSerilogESSink();
+if (!builder.Environment.IsDevelopment())
+{
+    builder.Host.ConfigureESSink(builder.Configuration);
+}
 
 builder.Services.AddAuthorization();
 builder.Services.AddGrpc(options =>
@@ -60,11 +63,13 @@ app.MapControllers();
 app.UseGrpcWeb(new GrpcWebOptions { DefaultEnabled = true });
 app.MapGrpcService<GrpcUserService>().EnableGrpcWeb();
 app.MapGrpcService<GrpcAuthService>().EnableGrpcWeb();
-app.MapGet("/", () => new
+
+app.MapGet("/", () => Results.Ok(new
 {
-    Status = HttpStatusCode.OK,
-    Message = "Kwik Nesta Identity Service is running..."
-});
+    Status = 200,
+    Successful = true,
+    Message = $"Kwik Nesta Identity Service running in {app.Environment.EnvironmentName} mode..."
+}));
 
 app.RunMigrations(true);
 await app.SeedInitialData(logger);

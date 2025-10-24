@@ -5,7 +5,6 @@ using EFCore.CrudKit.Library.Data.Interfaces;
 using KwikNesta.Contracts.Enums;
 using KwikNesta.Contracts.Extensions;
 using KwikNesta.Contracts.Models;
-using KwikNestaIdentity.Svc.Application.DTOs;
 using KwikNestaIdentity.Svc.Application.Extensions;
 using KwikNestaIdentity.Svc.Application.Helpers;
 using KwikNestaIdentity.Svc.Domain.Entities;
